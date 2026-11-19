@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css?v=<?php echo mt_rand(1,9999); ?>">
+    <?php require_once __DIR__ . '/core/config.php'; ?>
 </head>
 <body>
 
@@ -303,6 +304,11 @@
     </div>
 
     <script>
+    // ─── Configuración del servidor ───────────────────────────────────────────
+    // GEO_RESTRICCION_ACTIVA se lee desde config.php vía PHP
+    <?php require_once __DIR__ . '/core/config.php'; ?>
+    const GEO_ACTIVA = <?php echo GEO_RESTRICCION_ACTIVA ? 'true' : 'false'; ?>;
+
     // ─── Constantes ───────────────────────────────────────────────────────────
     const SESSION_KEY = 'sorteos_session_data';
     let stream            = null;
@@ -340,6 +346,12 @@
 
         // Limpiar la URL
         window.history.replaceState({}, document.title, window.location.pathname);
+
+        // ── Si la geo está desactivada, ir directo sin pedir GPS ──────────────
+        if (!GEO_ACTIVA) {
+            callValidateAccess(k, null, null, null);
+            return;
+        }
 
         // Pedir geolocalización — mostrar espera ANTES del diálogo del navegador
         // No mostramos "Acceso Restringido" hasta saber qué respondió el usuario

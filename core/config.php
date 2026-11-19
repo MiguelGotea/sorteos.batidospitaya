@@ -13,6 +13,14 @@
 // pasando esta misma clave como ?k=
 define('QR_SECRET', 'SORTEOS_2026_CONCIERTO_MARTINGARRIX_X9K7M');
 
+// ─── SWITCH: Restricción de Geolocalización ──────────────────────────────────
+// true  → el sistema verifica que el usuario esté cerca de una sucursal Pitaya
+//          (pide GPS, valida radio, guarda sucursal cercana en la sesión).
+// false → la restricción está DESACTIVADA: no se pide GPS, no se valida radio
+//          y la sesión se crea sin datos de sucursal (sucursal_id = null).
+// ─────────────────────────────────────────────────────────────────────────────
+define('GEO_RESTRICCION_ACTIVA', false);
+
 // Radio permitido en metros (mismo que descubre)
 define('RADIO_METROS', 2000);
 

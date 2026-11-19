@@ -1,7 +1,9 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/core/config.php';
-require_once __DIR__ . '/core/geo_validator.php';
+if (GEO_RESTRICCION_ACTIVA) {
+    require_once __DIR__ . '/core/geo_validator.php';
+}
 
 $response = ['success' => false, 'message' => '', 'token' => null, 'sucursal_nombre' => null];
 
@@ -25,22 +27,33 @@ if (empty($k) || $k !== QR_SECRET) {
     exit;
 }
 
-// ─── CAPA 2: Geolocalización ──────────────────────────────────────────────────
-if ($lat === null || $lng === null) {
-    $response['message']    = 'Es necesario permitir el acceso a tu ubicación para verificar que estás en una sucursal Pitaya participante.';
-    $response['error_type'] = 'GEO_REQUIRED';
-    echo json_encode($response);
-    exit;
-}
+// ─── CAPA 2: Geolocalización (controlada por GEO_RESTRICCION_ACTIVA) ─────────
+if (GEO_RESTRICCION_ACTIVA) {
+    if ($lat === null || $lng === null) {
+        $response['message']    = 'Es necesario permitir el acceso a tu ubicación para verificar que estás en una sucursal Pitaya participante.';
+        $response['error_type'] = 'GEO_REQUIRED';
+        echo json_encode($response);
+        exit;
+    }
 
-$geoCheck = validarUbicacionMultiSucursal($lat, $lng);
+    $geoCheck = validarUbicacionMultiSucursal($lat, $lng);
 
-if (!$geoCheck['valido']) {
-    $response['message']    = $geoCheck['mensaje'];
-    $response['error_type'] = 'OUT_OF_RANGE';
-    $response['distancia']  = $geoCheck['distancia'];
-    echo json_encode($response);
-    exit;
+    if (!$geoCheck['valido']) {
+        $response['message']    = $geoCheck['mensaje'];
+        $response['error_type'] = 'OUT_OF_RANGE';
+        $response['distancia']  = $geoCheck['distancia'];
+        echo json_encode($response);
+        exit;
+    }
+
+    $sucursalId     = $geoCheck['sucursal_id'];
+    $sucursalNombre = $geoCheck['sucursal_nombre'];
+    $distancia      = $geoCheck['distancia'];
+} else {
+    // Geo desactivada: sin sucursal asociada al acceso
+    $sucursalId     = null;
+    $sucursalNombre = null;
+    $distancia      = null;
 }
 
 // ─── CAPA 3: Crear sesión vía API ─────────────────────────────────────────────
@@ -58,10 +71,10 @@ $payload = json_encode([
     'ip'                    => $ip,
     'geo_lat'               => $lat,
     'geo_lng'               => $lng,
-    'distancia_metros'      => $geoCheck['distancia'],
+    'distancia_metros'      => $distancia,
     'geo_precision_metros'  => $precisionMetros,
-    'sucursal_id'           => $geoCheck['sucursal_id'],
-    'sucursal_nombre'       => $geoCheck['sucursal_nombre'],
+    'sucursal_id'           => $sucursalId,
+    'sucursal_nombre'       => $sucursalNombre,
     'expira_en'             => $expiraEn,
 ]);
 
@@ -96,7 +109,7 @@ if (!($apiData['success'] ?? false)) {
 $response['success']          = true;
 $response['message']          = 'Verificación exitosa. Acceso concedido.';
 $response['token']            = $token;
-$response['sucursal_id']      = $geoCheck['sucursal_id'];
-$response['sucursal_nombre']  = $geoCheck['sucursal_nombre'];
+$response['sucursal_id']      = $sucursalId;
+$response['sucursal_nombre']  = $sucursalNombre;
 
 echo json_encode($response);
