@@ -129,7 +129,9 @@
     <section id="como-participar" class="tab-content">
         <div class="content-container">
             <div class="info-card">
-                <h2 class="card-title">¿Cómo Participar?</h2>
+                <div class="card-title-wrap">
+                    <h2 class="card-title-highlighted">¿Cómo Participar?</h2>
+                </div>
 
                 <p class="participation-intro">
                     La participación se realizará mediante la acumulación de puntos, los cuales se
@@ -212,34 +214,19 @@
 
                 <div class="dark-teal-header">ACUMULACIÓN DE PUNTOS POR MONTO DE COMPRA</div>
                 <div class="section-box">
-                    <div style="font-weight:700; color:var(--primary-teal); margin-bottom:12px;">• CLIENTE REGULAR •</div>
-                    <div class="row-item">
-                        <span>Por cada <strong>C$250.00</strong> en compras realizadas</span>
-                        <span class="row-value">→ 1 punto</span>
+                    <div class="section-divider-label">• CLIENTE REGULAR •</div>
+                    <div class="puntos-centered-row">
+                        Por cada <strong>C$250.00</strong> en compras realizadas <span class="puntos-arrow">→ 1 punto</span>
                     </div>
-                    <div style="font-weight:700; color:var(--primary-teal); margin:18px 0 12px;">• CLUB PITAYA •</div>
-                    <div class="row-item">
-                        <span>Por cada <strong>C$250.00</strong> en compras realizadas</span>
-                        <span class="row-value">→ 2 puntos</span>
+                    <div class="section-divider-label" style="margin-top:18px;">• CLUB PITAYA •</div>
+                    <div class="puntos-centered-row" style="border-bottom:none;">
+                        Por cada <strong>C$250.00</strong> en compras realizadas <span class="puntos-arrow">→ 2 puntos</span>
                     </div>
                     <p class="note-footer" style="margin-top:14px;">
                         *El cálculo de puntos se realizará únicamente sobre compras efectivamente
                         facturadas durante la vigencia del sorteo.
                     </p>
                 </div>
-
-                <div class="dark-teal-header" style="background:var(--primary-teal);">CONDICIONES DE PARTICIPACIÓN</div>
-                <div class="section-box" style="border-color:var(--primary-teal);">
-                    <div class="row-item"><span>Un registro por ticket</span><span class="row-value">✓</span></div>
-                    <div class="row-item"><span>Tickets múltiples por cliente</span><span class="row-value">✓</span></div>
-                    <div class="row-item"><span>Conservar el ticket original</span><span class="row-value">Requerido</span></div>
-                    <div class="row-item"><span>Tickets ilegibles, alterados o duplicados</span><span class="row-value">Invalidados</span></div>
-                </div>
-
-                <p class="note-footer">
-                    *Debe escanear el QR en la sucursal Pitaya participante para habilitar el registro.<br>
-                    Cada registro de ticket requiere un nuevo escaneo del QR.
-                </p>
             </div>
         </div>
     </section>
@@ -250,48 +237,31 @@
             <div class="info-card">
                 <h2 class="card-title">Nuestros Premios</h2>
 
-                <div class="prizes-container">
-                    <div class="prize-block">
-                        <h4>🥇 Primer Lugar</h4>
-                        <ul class="prize-list">
-                            <li>Premio especial del sorteo</li>
-                            <li>Kit Pitaya exclusivo</li>
-                        </ul>
-                    </div>
-                    <div class="prize-block">
-                        <h4>🥈 Segundo Lugar</h4>
-                        <ul class="prize-list">
-                            <li>Premio sorpresa</li>
-                            <li>Kit Pitaya para dos personas</li>
-                        </ul>
-                    </div>
-                    <div class="prize-block">
-                        <h4>🥉 Tercer Lugar</h4>
-                        <ul class="prize-list">
-                            <li>Canasta de productos Pitaya</li>
-                            <li>Desayuno Pitaya para dos</li>
-                        </ul>
+                <div class="dark-teal-header">PREMIO</div>
+                <div class="section-box prize-vip-box">
+                    <div class="vip-prize-content">
+                        <svg class="vip-icon" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M30 4 L56 30 L30 56 L4 30 Z" stroke="#26a69a" stroke-width="2.5" fill="rgba(38,166,154,0.08)"/>
+                            <path d="M30 16 L44 30 L30 44 L16 30 Z" stroke="#26a69a" stroke-width="1.5" fill="rgba(38,166,154,0.14)"/>
+                        </svg>
+                        <div class="vip-name">PASE DOBLE VIP</div>
+                        <p class="vip-note">El premio no es transferible ni canjeable por dinero en efectivo.</p>
                     </div>
                 </div>
-
-                <p class="note-footer" style="margin-top:20px;">
-                    *Cada participante podrá resultar ganador de 1 solo premio durante el sorteo.<br>
-                    Los premios no son transferibles ni canjeables por dinero en efectivo.
-                </p>
 
                 <!-- TÉRMINOS Y CONDICIONES -->
                 <div class="dark-teal-header" style="margin-top:32px;">TÉRMINOS Y CONDICIONES</div>
                 <div class="section-box terminos-box">
                     <ul class="terminos-list">
-                        <li>Participan únicamente personas mayores de <strong>18 años</strong>.</li>
-                        <li>No podrán participar colaboradores de Batidos Pitaya.</li>
-                        <li>Para reclamar el premio, el ganador deberá presentar su cédula de identidad vigente.</li>
-                        <li>Los datos registrados deberán coincidir con los del documento de identidad.</li>
-                        <li>Las facturas duplicadas, alteradas o fuera de fecha serán invalidadas.</li>
-                        <li>El ganador será seleccionado mediante sorteo entre las participaciones válidas.</li>
-                        <li>El premio no es transferible ni canjeable por dinero en efectivo.</li>
-                        <li>Participar en la promoción implica la aceptación de estos términos y condiciones.</li>
-                        <li>Solo serán válidas las facturas originales, legibles, completas y registradas durante la vigencia de la promoción.</li>
+                        <li>* Participan únicamente personas mayores de <strong>18 años</strong>.</li>
+                        <li>* No podrán participar colaboradores de Batidos Pitaya.</li>
+                        <li>* Para reclamar el premio, el ganador deberá presentar su cédula de identidad vigente.</li>
+                        <li>* Los datos registrados deberán coincidir con los del documento de identidad.</li>
+                        <li>* Las facturas duplicadas, alteradas o fuera de fecha serán invalidadas.</li>
+                        <li>* El ganador será seleccionado mediante sorteo entre las participaciones válidas.</li>
+                        <li>* El premio no es transferible ni canjeable por dinero en efectivo.</li>
+                        <li>* Participar en la promoción implica la aceptación de estos términos y condiciones.</li>
+                        <li>* Solo serán válidas las facturas originales, legibles, completas y registradas durante la vigencia de la promoción.</li>
                     </ul>
                 </div>
 
