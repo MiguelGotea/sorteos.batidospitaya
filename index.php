@@ -71,10 +71,10 @@
 
                         <!-- Fila: No. Cédula -->
                         <div class="form-row">
-                            <label for="numero_cedula" class="form-row-label">No. Cédula</label>
+                            <label for="numero_cedula" class="form-row-label">No. Cédula *</label>
                             <div class="form-row-input">
                                 <input type="text" id="numero_cedula" name="numero_cedula"
-                                       placeholder="000-000000-0000X">
+                                       placeholder="000-000000-0000X" required>
                             </div>
                         </div>
 
