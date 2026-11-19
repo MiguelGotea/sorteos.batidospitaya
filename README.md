@@ -30,7 +30,33 @@ descubre.batidospitaya.com/             ← Solo .htaccess de redirección del Q
 
 ## 3. Estrategia de Acceso (QR + Geo)
 
-### Flujo completo
+### Switches de control (`core/config.php`)
+
+| Constante | Tipo | Estado actual | Descripción |
+|---|---|---|---|
+| `GEO_RESTRICCION_ACTIVA` | `bool` | `false` | Cuando es `true`: solicita permisos de GPS al navegador y valida que el usuario esté dentro del radio de 2 km de una sucursal Pitaya. Cuando es `false`: no pide GPS, el formulario se abre sin verificar ubicación física. |
+| `VALIDAR_PAIS_NICARAGUA` | `bool` | `true` | Cuando es `true`: verifica de forma transparente (sin pedir permisos) que el participante esté en Nicaragua usando Cloudflare `CF-IPCountry`, GeoIP por IP pública y zona horaria del navegador (`America/Managua`). No bloquea si los servicios externos fallan. |
+
+> Para reactivar la geo: cambiar `GEO_RESTRICCION_ACTIVA` a `true` en `core/config.php`. El resto del código lo detecta automáticamente.
+
+### Campos `sucursal_id` y `sucursal_nombre` en `sorteos_registros`
+
+Estos dos campos vienen de la validación GPS (cuando `GEO_RESTRICCION_ACTIVA = true`) e indican en qué sucursal física estaba el cliente al escanear el QR.
+
+- **`sucursal_id`** = `sucursales.codigo` (no el `id` de fila de la tabla). Es el código de sucursal del sistema.
+- **`sucursal_nombre`** = nombre legible de la sucursal detectada por GPS.
+- Con `GEO_RESTRICCION_ACTIVA = false` ambos campos quedan como `NULL` — eso es esperado y válido.
+- **No confundir con `ia_sucursal_nombre`**, que es el nombre de sucursal extraído del **texto del ticket** por el motor de IA, y es obligatorio para el anti-duplicado.
+
+### Origen de cada campo relacionado a sucursal
+
+| Campo | Fuente | Obligatorio | Propósito |
+|---|---|---|---|
+| `sucursal_id` | GPS → Haversine → `sucursales.codigo` | No (null si GPS off) | Auditoría de dónde escaneó el cliente |
+| `sucursal_nombre` | GPS → nombre de la sucursal más cercana | No (null si GPS off) | Auditoría de dónde escaneó el cliente |
+| `ia_sucursal_nombre` | Extracción IA del ticket físico | ✅ Sí (siempre) | Clave de anti-duplicado + identificar la tienda del ticket |
+
+### Flujo completo (con GPS activo)
 
 ```
 QR físico en sucursal
@@ -38,23 +64,33 @@ QR físico en sucursal
          └── .htaccess redirige → sorteos.batidospitaya.com/?k=SORTEOS_2026_CONCIERTO_MARTINGARRIX_X9K7M
               └── validate_access.php
                    ├── Verifica ?k= (QR_SECRET)
-                   ├── Pide geolocalización del dispositivo
+                   ├── [Si VALIDAR_PAIS_NICARAGUA=true] Verifica país por IP/timezone
+                   ├── [Si GEO_RESTRICCION_ACTIVA=true] Pide GPS al navegador
                    │    ├── Esperando → "Verificando ubicación / acepta el permiso..."
-                   │    ├── Denegado → "Activa tu ubicación" + instrucciones (no muestra Restringido)
+                   │    ├── Denegado → "Activa tu ubicación" + instrucciones
                    │    └── Error GPS → "Acceso Restringido" con motivo
-                   ├── Haversine contra las 16 sucursales activas (radio 150 m)
-                   └── Si OK → crea sesión en DB (token UUID, expira 30 min)
+                   ├── [Si GEO_RESTRICCION_ACTIVA=true] Haversine contra sucursales activas (radio 2km)
+                   │    └── Sucursales: obtenidas en tiempo real desde API (sucursales.activa=1 AND sucursal=1)
+                   └── Crea sesión en DB (token UUID, expira 30 min)
                         └── Formulario activo para 1 ticket
+```
+
+### Flujo actual (GPS desactivado)
+
+```
+QR → validate_access.php
+    ├── Verifica ?k= (QR_SECRET)
+    ├── Verifica país por IP/timezone (sin pedir permisos)
+    └── Crea sesión directo (sucursal_id=null, sucursal_nombre=null)
+         └── Formulario activo para 1 ticket
 ```
 
 ### Restricciones de acceso
 - El QR físico en descubre redirige al secreto de sorteos. **Nunca cambiar el QR impreso.**
 - Cada escaneo = 1 sesión. La sesión se marca `usado=1` al guardar el registro.
 - Un cliente **puede** registrar múltiples tickets siempre que escanee el QR por cada uno.
-- La verificación de ubicación cubre **todas las sucursales activas** (`activa=1`), radio 150 m.
-- Si el usuario deniega ubicación → instrucciones para activarla (no muestra "Acceso Restringido").
 - Pestañas **"Cómo Participar"** y **"Premios"** son siempre visibles sin QR ni ubicación.
-- Solo la pestaña **Registro** requiere QR + ubicación válida.
+- Solo la pestaña **Registro** requiere QR válido (+ ubicación si GPS activo).
 
 ### Secretos
 | Clave | Valor |
@@ -181,6 +217,7 @@ Todos requieren header `X-Sorteos-Token`.
 
 | Archivo | Método | Descripción |
 |---|---|---|
+| `sucursales_activas.php` | GET | Devuelve sucursales con `activa=1` y `sucursal=1`: `codigo` (usado como `sucursal_id`), `nombre`, `lat`, `lng` |
 | `crear_sesion.php` | POST JSON | Crea sesión QR válida, retorna token |
 | `procesar_ticket.php` | POST multipart | Recibe imagen + token_sesion, verifica sesión, extrae datos vía AIService |
 | `guardar_registro.php` | POST multipart | Verifica límite IP, guarda participación + foto |
@@ -335,25 +372,20 @@ También bloquea carpetas: `.git/`, `.scripts/`, `img_bosquejos/`
 
 ---
 
-## 14. Sucursales Activas (hardcoded en `core/config.php`)
+## 14. Sucursales Activas (desde API en tiempo real)
 
-| # | Nombre | Lat | Lng |
-|---|---|---|---|
-| 1 | León | 12.4360159 | -86.8785915 |
-| 2 | Matagalpa | 12.9226542 | -85.9199127 |
-| 3 | Estelí | 13.0935830 | -86.3557330 |
-| 4 | Altamira | 12.1214362 | -86.2524664 |
-| 5 | Villa Fontana | 12.1029806 | -86.2626317 |
-| 6 | Granada | 11.9301629 | -85.9512482 |
-| 7 | Las Colinas | 12.0989821 | -86.2397280 |
-| 8 | Masaya | 11.9760658 | -86.0944643 |
-| 9 | Natura | 12.1127630 | -86.2757494 |
-| 10 | Las Brisas | 12.1520307 | -86.3080606 |
-| 11 | Rivas | 11.4384092 | -85.8289844 |
-| 12 | Única | 12.0828984 | -86.2299587 |
-| 13 | Ticuantepe | 12.0502313 | -86.2024189 |
+Las sucursales ya **no están hardcodeadas** en `core/config.php`.  
+Se obtienen en tiempo real desde `api.batidospitaya.com/api/sorteos/sucursales_activas.php` con:
 
-> Para agregar sucursales: actualizar el array `SUCURSALES_ACTIVAS` en `core/config.php`.
+```sql
+SELECT codigo, nombre, latitud, longitud
+FROM sucursales
+WHERE activa = 1 AND sucursal = 1
+```
+
+La función `getSucursalesActivas()` en `config.php` hace la llamada una sola vez por request y cachea el resultado en `$GLOBALS`. Si la API no responde, retorna array vacío y `geo_validator.php` devuelve error descriptivo.
+
+> Para agregar o desactivar sucursales: actualizar directamente en la tabla `sucursales` de la DB (campos `activa` y `sucursal`). No se requiere cambio de código.
 
 ---
 

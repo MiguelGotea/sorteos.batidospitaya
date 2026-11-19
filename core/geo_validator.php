@@ -45,7 +45,19 @@ function validarUbicacionMultiSucursal($lat, $lng): array
     $mejorSucursal  = null;
     $menorDistancia = PHP_INT_MAX;
 
-    foreach (SUCURSALES_ACTIVAS as $sucursal) {
+    $sucursales = getSucursalesActivas(); // Obtiene desde API (con caché en memoria)
+
+    if (empty($sucursales)) {
+        return [
+            'valido'           => false,
+            'sucursal_id'      => null,
+            'sucursal_nombre'  => null,
+            'distancia'        => null,
+            'mensaje'          => 'No se pudo obtener la lista de sucursales. Intenta nuevamente.',
+        ];
+    }
+
+    foreach ($sucursales as $sucursal) {
         $dist = calcularDistanciaMetros($sucursal['lat'], $sucursal['lng'], $lat, $lng);
         if ($dist < $menorDistancia) {
             $menorDistancia = $dist;

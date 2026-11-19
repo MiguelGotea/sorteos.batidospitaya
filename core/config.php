@@ -48,24 +48,41 @@ define('API_SORTEOS_BASE',  'https://api.batidospitaya.com/api/sorteos');
 define('GOOGLE_VISION_API_KEY', 'AIzaSyC4e4r67sp9LTDsMQE4tQCw6orLvKtJQ5M');
 
 // -----------------------------------------------------------------------------
-// Sucursales activas hardcodeadas (fuente: tabla sucursales, activa=1)
-// Última actualización: 2026-11-19
+// Sucursales activas — se obtienen en tiempo real desde la API
+// (tabla sucursales WHERE activa=1 AND sucursal=1, campos: codigo, nombre, lat, lng)
+//
+// El campo 'id' de cada entrada devuelta por la API = sucursales.codigo
+// (NO el id de fila). Es el código de sucursal usado en registros y reportes.
+//
+// La función getSucursalesActivas() hace la llamada una sola vez por request
+// y cachea el resultado en $GLOBALS para evitar dobles llamadas.
 // -----------------------------------------------------------------------------
-define('SUCURSALES_ACTIVAS', [
-    ['id' => 1,  'nombre' => 'León',          'lat' => 12.4360158900268,   'lng' => -86.8785914721781],
-    ['id' => 2,  'nombre' => 'Matagalpa',     'lat' => 12.9226542017308,   'lng' => -85.9199126929161],
-    ['id' => 3,  'nombre' => 'Estelí',        'lat' => 13.093583,          'lng' => -86.355733],
-    ['id' => 4,  'nombre' => 'Altamira',      'lat' => 12.1214361971434,   'lng' => -86.2524664284708],
-    ['id' => 5,  'nombre' => 'Villa Fontana', 'lat' => 12.1029805528255,   'lng' => -86.2626316680716],
-    ['id' => 6,  'nombre' => 'Granada',       'lat' => 11.9301629214584,   'lng' => -85.9512481763033],
-    ['id' => 7,  'nombre' => 'Las Colinas',   'lat' => 12.0989821291169,   'lng' => -86.2397280119443],
-    ['id' => 8,  'nombre' => 'Masaya',        'lat' => 11.9760657848697,   'lng' => -86.0944643220183],
-    ['id' => 9,  'nombre' => 'Natura',        'lat' => 12.1127630492795,   'lng' => -86.2757494203965],
-    ['id' => 12, 'nombre' => 'Las Brisas',    'lat' => 12.152030668624,    'lng' => -86.3080605727177],
-    ['id' => 13, 'nombre' => 'Rivas',         'lat' => 11.4384092104362,   'lng' => -85.8289843976444],
-    ['id' => 19, 'nombre' => 'Única',         'lat' => 12.082898446555852, 'lng' => -86.22995873579353],
-    ['id' => 20, 'nombre' => 'Ticuantepe',    'lat' => 12.050231308474618, 'lng' => -86.20241886951335],
-    ['id' => 23, 'nombre' => 'Calli',         'lat' => 12.154528924761436, 'lng' => -86.3489311910773],
-    ['id' => 25, 'nombre' => 'Bolonia',       'lat' => 12.12299607439811,  'lng' => -86.25234063643902],
-    ['id' => 26, 'nombre' => 'Las Américas',  'lat' => 12.139437166695028, 'lng' => -86.22888316647938],
-]);
+function getSucursalesActivas(): array
+{
+    if (isset($GLOBALS['__sucursales_cache'])) {
+        return $GLOBALS['__sucursales_cache'];
+    }
+
+    $ch = curl_init(API_SORTEOS_BASE . '/sucursales_activas.php');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPGET        => true,
+        CURLOPT_HTTPHEADER     => ['X-Sorteos-Token: ' . API_SORTEOS_TOKEN],
+        CURLOPT_TIMEOUT        => 5,
+        CURLOPT_CONNECTTIMEOUT => 3,
+    ]);
+    $result   = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    $sucursales = [];
+    if ($httpCode === 200 && $result) {
+        $data = json_decode($result, true);
+        if (!empty($data['success']) && is_array($data['sucursales'])) {
+            $sucursales = $data['sucursales'];
+        }
+    }
+
+    $GLOBALS['__sucursales_cache'] = $sucursales;
+    return $sucursales;
+}
