@@ -27,7 +27,7 @@
             <img src="img/Logo.svg" alt="Batidos Pitaya" class="hero-logo"
                  onerror="this.onerror=null; this.style.display='none'; document.getElementById('heroLogoFallback').style.display='block'">
             <div id="heroLogoFallback" style="display:none; font-size:2rem; font-weight:900; color:white; letter-spacing:0.1em; margin-bottom:14px;">PITAYA</div>
-            <p class="hero-te-lleva">te lleva al concierto de</p>
+            <p class="hero-te-lleva">te lleva al concierto más grande</p>
             <h1 class="hero-artist">MAR<span class="plus-sign">+</span>IN GARRIX</h1>
             <p class="hero-event-info">28 NOV | ESTADIO NACIONAL SOBERANÍA</p>
         </div>
@@ -49,60 +49,83 @@
 
                     <h3 class="form-dark-title">📋 Registro de Participación</h3>
 
-                    <!-- Paso 1: Foto del ticket -->
-                    <div style="margin-bottom:24px;">
-                        <label class="dark-label">Foto del Ticket *</label>
-                        <div class="camera-container" style="max-width:100%;">
-                            <button type="button" class="camera-btn" id="cameraOpenBtn" onclick="openCamera()">
-                                📷 Tomar foto del ticket
-                            </button>
-                            <div id="ticketPreviewContainer" style="margin-top:10px;"></div>
-                            <div id="ticketValidationStatus" style="display:none;" class="ticket-validation-status info"></div>
-                        </div>
-                    </div>
+                    <!-- Filas del formulario en formato tabla -->
+                    <div class="form-rows">
 
-                    <!-- Código de participación (auto-llenado, no editable) -->
-                    <div class="form-group full-width" style="margin-bottom:16px;">
-                        <label for="codigo_participacion">Código de Participación *</label>
-                        <input type="text" id="codigo_participacion" name="codigo_participacion"
-                               placeholder="Se leerá automáticamente de tu ticket"
-                               readonly required>
-                    </div>
+                        <!-- Fila: Nombre Completo -->
+                        <div class="form-row">
+                            <label for="nombre_completo" class="form-row-label">Nombre Completo *</label>
+                            <div class="form-row-input">
+                                <input type="text" id="nombre_completo" name="nombre_completo"
+                                       placeholder="Ej: Juan Pérez" required onblur="capitalizeName(this)">
+                            </div>
+                        </div>
 
-                    <!-- Puntos asignados (calculados del monto) -->
-                    <div id="puntosContainer" style="display:none; margin-bottom:20px;">
-                        <label class="dark-label">Puntos de Sorteo</label>
-                        <div class="puntos-display-box">
-                            <span class="puntos-valor" id="puntosValor">0</span>
-                            <span class="puntos-label">punto(s) acumulado(s)</span>
-                            <span class="puntos-tipo" id="puntosTipo" style="display:none;">Cliente Regular</span>
+                        <!-- Fila: No. Contacto -->
+                        <div class="form-row">
+                            <label for="numero_contacto" class="form-row-label">No. Contacto *</label>
+                            <div class="form-row-input">
+                                <input type="tel" id="numero_contacto" name="numero_contacto"
+                                       placeholder="Ej: 88888888" required maxlength="8" pattern="[0-9]{8}"
+                                       oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Datos del participante -->
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label for="nombre_completo">Nombre Completo *</label>
-                            <input type="text" id="nombre_completo" name="nombre_completo"
-                                   placeholder="Ej: Juan Pérez" required onblur="capitalizeName(this)">
+                        <!-- Fila: No. Cédula -->
+                        <div class="form-row">
+                            <label for="numero_cedula" class="form-row-label">No. Cédula</label>
+                            <div class="form-row-input">
+                                <input type="text" id="numero_cedula" name="numero_cedula"
+                                       placeholder="000-000000-0000X">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="numero_contacto">No. Contacto *</label>
-                            <input type="tel" id="numero_contacto" name="numero_contacto"
-                                   placeholder="Ej: 88888888" required maxlength="8" pattern="[0-9]{8}"
-                                   oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+
+                        <!-- Fila: Correo Electrónico -->
+                        <div class="form-row">
+                            <label for="correo_electronico" class="form-row-label">
+                                Correo Electrónico
+                                <span class="label-optional">opcional</span>
+                            </label>
+                            <div class="form-row-input">
+                                <input type="email" id="correo_electronico" name="correo_electronico"
+                                       placeholder="usuario@gmail.com">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="numero_cedula">No. Cédula</label>
-                            <input type="text" id="numero_cedula" name="numero_cedula"
-                                   placeholder="000-000000-0000X">
+
+                        <!-- Fila: Código de Participación -->
+                        <div class="form-row">
+                            <label for="codigo_participacion" class="form-row-label">Código de Participación *</label>
+                            <div class="form-row-input">
+                                <input type="text" id="codigo_participacion" name="codigo_participacion"
+                                       placeholder="Se leerá automáticamente de tu ticket"
+                                       readonly required>
+                            </div>
                         </div>
-                        <div class="form-group full-width">
-                            <label for="correo_electronico">Correo Electrónico (opcional)</label>
-                            <input type="email" id="correo_electronico" name="correo_electronico"
-                                   placeholder="usuario@gmail.com">
+
+                        <!-- Fila: Foto del Ticket + Puntos (en PC en la misma fila tras validar) -->
+                        <div class="form-row form-row-foto">
+                            <label class="form-row-label">Foto del Ticket *</label>
+                            <div class="form-row-input foto-input-area">
+                                <!-- Botón cámara / retomar foto -->
+                                <div class="foto-camara-wrap">
+                                    <button type="button" class="camera-btn-icon" id="cameraOpenBtn" onclick="openCamera()">
+                                        <span class="cam-icon">📷</span>
+                                        <span class="cam-text" id="camBtnText">Tomar foto del ticket</span>
+                                    </button>
+                                    <!-- Check de verificado (visible tras validar) -->
+                                    <span class="foto-verified-check" id="fotoVerifiedCheck" style="display:none;">✅</span>
+                                </div>
+                                <!-- Puntos acumulados (en PC al lado, en móvil debajo) -->
+                                <div id="puntosContainer" class="puntos-inline" style="display:none;">
+                                    <span class="puntos-valor" id="puntosValor">0</span>
+                                    <span class="puntos-label-inline">punto(s) acumulado(s)</span>
+                                    <span class="puntos-tipo" id="puntosTipo" style="display:none;"></span>
+                                </div>
+                            </div>
                         </div>
+
                     </div>
+                    <!-- Sin status box de ticket verificado -->
 
                     <!-- Campos ocultos (datos extraídos + sesión) -->
                     <input type="hidden" id="h_token_sesion"       name="token_sesion">
@@ -414,13 +437,6 @@
         document.getElementById('registrationForm').style.display = 'none';
     }
 
-    function showValidationStatus(msg, type) {
-        let el = document.getElementById('ticketValidationStatus');
-        el.textContent  = msg;
-        el.className    = `ticket-validation-status ${type}`;
-        el.style.display = 'block';
-    }
-
     // ─── Cámara ───────────────────────────────────────────────────────────────
     async function openCamera() {
         try {
@@ -448,27 +464,27 @@
 
         canvas.toBlob(async blob => {
             capturedPhotoBlob = blob;
-
-            // Preview
-            const url = URL.createObjectURL(blob);
-            document.getElementById('ticketPreviewContainer').innerHTML =
-                `<img src="${url}" class="ticket-preview" alt="Vista previa del ticket">`;
-
+            // Sin preview de imagen (punto 5)
             closeCamera();
             await processTicketImage(blob);
         }, 'image/jpeg', 0.92);
     }
 
     async function processTicketImage(blob) {
-        showValidationStatus('Verificando ticket...', 'info');
-        document.getElementById('submitBtn').disabled    = true;
+        // Mostrar estado de verificando en el botón mismo
+        const camText = document.getElementById('camBtnText');
+        const camIcon = document.querySelector('#cameraOpenBtn .cam-icon');
+        camText.textContent = 'Verificando...';
+        if (camIcon) camIcon.textContent = '⏳';
+
+        document.getElementById('submitBtn').disabled = true;
         document.getElementById('codigo_participacion').value = '';
         document.getElementById('puntosContainer').style.display = 'none';
+        document.getElementById('fotoVerifiedCheck').style.display = 'none';
         document.getElementById('h_validado_imagen').value = '0';
 
         const fd = new FormData();
         fd.append('ticket_image', blob, 'ticket.jpg');
-        // Enviar el token de sesión para que el servidor valide antes de procesar
         const tokenEl = document.getElementById('h_token_sesion');
         if (tokenEl && tokenEl.value) fd.append('token_sesion', tokenEl.value);
 
@@ -480,12 +496,12 @@
                 // Llenar código (no editable)
                 document.getElementById('codigo_participacion').value = data.codigo_participacion;
 
-                // Llenar puntos
+                // Llenar puntos en la fila de foto
                 document.getElementById('puntosValor').textContent = data.puntos_sorteo;
                 const tipoEl = document.getElementById('puntosTipo');
                 tipoEl.textContent = data.es_club ? 'Club Pitaya' : 'Cliente Regular';
                 tipoEl.style.display = 'inline-block';
-                document.getElementById('puntosContainer').style.display = 'block';
+                document.getElementById('puntosContainer').style.display = 'flex';
 
                 // Campos ocultos
                 document.getElementById('h_es_club').value            = data.es_club ? '1' : '0';
@@ -496,15 +512,23 @@
                 document.getElementById('h_puntos_sorteo').value      = data.puntos_sorteo;
                 document.getElementById('h_validado_imagen').value    = '1';
 
-                showValidationStatus('✅ Ticket verificado. Código: ' + data.codigo_participacion, 'success');
+                // Cambiar botón a "Retomar foto" + mostrar check verde
+                if (camIcon) camIcon.textContent = '📷';
+                camText.textContent = 'Retomar foto';
+                document.getElementById('fotoVerifiedCheck').style.display = 'inline';
+
                 document.getElementById('submitBtn').disabled = false;
-                document.getElementById('cameraOpenBtn').textContent = '📷 Retomar foto';
             } else {
-                showValidationStatus('⚠️ ' + (data.mensaje || 'No se pudo verificar el ticket. Reintente la foto.'), 'warning');
+                // Error: resetear botón
+                if (camIcon) camIcon.textContent = '📷';
+                camText.textContent = 'Tomar foto del ticket';
+                showMsg('⚠️ ' + (data.mensaje || 'No se pudo verificar el ticket. Reintente la foto.'), '#e6a817');
                 document.getElementById('submitBtn').disabled = true;
             }
         } catch(e) {
-            showValidationStatus('⚠️ Error al verificar el ticket. Reintente la foto.', 'warning');
+            if (camIcon) camIcon.textContent = '📷';
+            camText.textContent = 'Tomar foto del ticket';
+            showMsg('⚠️ Error al verificar el ticket. Reintente la foto.', '#e6a817');
             document.getElementById('submitBtn').disabled = true;
         }
     }
@@ -554,8 +578,12 @@
                 document.getElementById('successModal').classList.add('active');
                 this.reset();
                 capturedPhotoBlob = null;
-                document.getElementById('ticketPreviewContainer').innerHTML = '';
-                document.getElementById('ticketValidationStatus').style.display = 'none';
+                // Resetear UI de foto
+                const camIcon = document.querySelector('#cameraOpenBtn .cam-icon');
+                const camText = document.getElementById('camBtnText');
+                if (camIcon) camIcon.textContent = '📷';
+                if (camText) camText.textContent = 'Tomar foto del ticket';
+                document.getElementById('fotoVerifiedCheck').style.display = 'none';
                 document.getElementById('puntosContainer').style.display = 'none';
                 showMsg('', '');
             } else if (data.limit_reached) {

@@ -123,7 +123,7 @@ body {
 /* Área del formulario centrada bajo el hero */
 .registro-content {
     padding: 10px 15px 60px;
-    max-width: 580px;
+    max-width: 640px;
     margin: 0 auto;
 }
 
@@ -666,8 +666,175 @@ body {
 .seg-gray  { background: #f4f5f5; }
 
 /* ════════════════════════════════════════════
-   RESPONSIVE
+   FORM ROWS  —  layout de filas etiqueta|input
    ════════════════════════════════════════════ */
+
+.form-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Cada fila: label a la izquierda, input a la derecha */
+.form-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    align-items: center;
+    min-height: 52px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    padding: 6px 0;
+    gap: 12px;
+}
+.form-row:last-child { border-bottom: none; }
+
+/* Etiqueta izquierda */
+.form-row-label {
+    font-weight: 700;
+    color: rgba(255,255,255,0.88);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    line-height: 1.3;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-right: 8px;
+}
+
+/* "opcional" debajo del label de correo */
+.label-optional {
+    font-size: 0.68rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.42);
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1;
+}
+
+/* Input ocupa todo el espacio disponible */
+.form-row-input {
+    width: 100%;
+}
+.form-row-input input {
+    width: 100%;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: white;
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s;
+}
+.form-row-input input::placeholder { color: rgba(255,255,255,0.32); }
+.form-row-input input:focus {
+    background: rgba(38,166,154,0.18);
+    box-shadow: 0 0 0 2px var(--primary-teal);
+    border-color: var(--primary-teal);
+}
+.form-row-input input[readonly] {
+    background: rgba(0,0,0,0.25);
+    color: rgba(255,255,255,0.45);
+    border-color: rgba(255,255,255,0.08);
+    cursor: not-allowed;
+}
+
+/* ── Fila de foto: botón icono cámara ── */
+.form-row-foto .form-row-input {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: nowrap;
+}
+
+/* Wrap del botón + check */
+.foto-camara-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+/* Botón cámara compacto: solo ícono + texto */
+.camera-btn-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 16px;
+    background: var(--primary-teal);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+.camera-btn-icon:hover  { background: #1d8c82; transform: translateY(-1px); }
+.camera-btn-icon .cam-icon { font-size: 1rem; line-height: 1; }
+
+/* Check de verificado */
+.foto-verified-check {
+    font-size: 1.3rem;
+    line-height: 1;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Puntos en línea (al lado del botón en PC) */
+.puntos-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    animation: fadeIn 0.4s ease;
+}
+.puntos-inline .puntos-valor {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary-teal);
+}
+.puntos-label-inline {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.65);
+}
+.puntos-inline .puntos-tipo {
+    display: inline-block;
+    background: var(--primary-teal);
+    color: white;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+/* ════════════════════════════════════════════
+   RESPONSIVE  —  celular (≤ 640px)
+   ════════════════════════════════════════════ */
+@media (max-width: 640px) {
+
+    /* Cada fila se apila: label arriba, input abajo */
+    .form-row {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        padding: 10px 0;
+        gap: 5px;
+    }
+
+    /* Fila de foto: botón y puntos en columna */
+    .form-row-foto .form-row-input {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    /* Puntos ocupan su propia línea debajo del botón */
+    .puntos-inline {
+        width: 100%;
+    }
+}
 @media (max-width: 700px) {
     .tab-segment { padding: 24px 18px; }
     .form-grid { grid-template-columns: 1fr; }
