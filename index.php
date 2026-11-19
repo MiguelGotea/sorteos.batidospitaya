@@ -144,38 +144,7 @@
                     <!-- Paso 1: Escanear QR -->
                     <div class="icon-step">
                         <div class="icon-step-icon">
-                            <svg class="step-svg-icon" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Cuerpo del teléfono -->
-                                <rect x="18" y="4" width="28" height="52" rx="6" stroke="#26a69a" stroke-width="2.5"/>
-                                <!-- Altavoz superior -->
-                                <line x1="29" y1="11" x2="37" y2="11" stroke="#26a69a" stroke-width="2.5" stroke-linecap="round"/>
-                                <!-- Indicador home -->
-                                <line x1="29" y1="51" x2="37" y2="51" stroke="#26a69a" stroke-width="2.5" stroke-linecap="round"/>
-                                <!-- Pantalla -->
-                                <rect x="22" y="16" width="20" height="27" rx="2" stroke="#26a69a" stroke-width="1.2" fill="rgba(38,166,154,0.06)"/>
-                                <!-- QR esquina sup-izq -->
-                                <rect x="24" y="18" width="6" height="6" rx="1" stroke="#26a69a" stroke-width="1.5"/>
-                                <rect x="25.5" y="19.5" width="3" height="3" fill="#26a69a"/>
-                                <!-- QR esquina sup-der -->
-                                <rect x="34" y="18" width="6" height="6" rx="1" stroke="#26a69a" stroke-width="1.5"/>
-                                <rect x="35.5" y="19.5" width="3" height="3" fill="#26a69a"/>
-                                <!-- QR esquina inf-izq -->
-                                <rect x="24" y="29" width="6" height="6" rx="1" stroke="#26a69a" stroke-width="1.5"/>
-                                <rect x="25.5" y="30.5" width="3" height="3" fill="#26a69a"/>
-                                <!-- Patrón centro QR -->
-                                <line x1="34" y1="29" x2="40" y2="29" stroke="#26a69a" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="34" y1="32" x2="38" y2="32" stroke="#26a69a" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="38" y1="32" x2="38" y2="35" stroke="#26a69a" stroke-width="1.5" stroke-linecap="round"/>
-                                <line x1="34" y1="35" x2="40" y2="35" stroke="#26a69a" stroke-width="1.5" stroke-linecap="round"/>
-                                <!-- Líneas de escaneo izquierda -->
-                                <line x1="4"  y1="24" x2="13" y2="24" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
-                                <line x1="4"  y1="29" x2="13" y2="29" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
-                                <line x1="4"  y1="34" x2="13" y2="34" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
-                                <!-- Líneas de escaneo derecha -->
-                                <line x1="51" y1="24" x2="60" y2="24" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
-                                <line x1="51" y1="29" x2="60" y2="29" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
-                                <line x1="51" y1="34" x2="60" y2="34" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
+                            <img src="img/escanearcodigo.png" alt="Escanear código QR" class="step-svg-icon">
                         </div>
                         <h4>Escanear el código QR</h4>
                         <p>Ubicado en sucursales Pitaya<br>y redes sociales.</p>
@@ -186,20 +155,7 @@
                     <!-- Paso 2: Formulario -->
                     <div class="icon-step">
                         <div class="icon-step-icon">
-                            <svg class="step-svg-icon" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <!-- Cuerpo del documento -->
-                                <path d="M10 6 L10 64 L50 64 L50 20 L38 6 Z" stroke="#26a69a" stroke-width="2.5" stroke-linejoin="round"/>
-                                <!-- Esquina doblada -->
-                                <path d="M38 6 L38 20 L50 20" stroke="#26a69a" stroke-width="2" stroke-linejoin="round"/>
-                                <!-- Líneas de formulario -->
-                                <line x1="17" y1="30" x2="43" y2="30" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
-                                <line x1="17" y1="38" x2="43" y2="38" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
-                                <line x1="17" y1="46" x2="30" y2="46" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
-                                <!-- Círculo check -->
-                                <circle cx="42" cy="52" r="9" fill="rgba(38,166,154,0.12)" stroke="#26a69a" stroke-width="2"/>
-                                <!-- Palomita -->
-                                <path d="M37 52 L40 55 L48 45" stroke="#26a69a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                            <img src="img/completarformulario.png" alt="Completar formulario Digital" class="step-svg-icon">
                         </div>
                         <h4>Completar el formulario Digital</h4>
                         <p>Datos personales, Fotografía de la factura*<br>Conservar la factura original.</p>
@@ -212,8 +168,10 @@
                     o no registradas vía QR serán automáticamente invalidadas.
                 </p>
 
-                <div class="dark-teal-header">ACUMULACIÓN DE PUNTOS POR MONTO DE COMPRA</div>
-                <div class="section-box">
+                <div class="card-title-wrap">
+                    <h3 class="card-title-highlighted card-title-dark">ACUMULACIÓN DE PUNTOS POR MONTO DE COMPRA</h3>
+                </div>
+                <div class="puntos-section">
                     <div class="section-divider-label">• CLIENTE REGULAR •</div>
                     <div class="puntos-centered-row">
                         Por cada <strong>C$250.00</strong> en compras realizadas <span class="puntos-arrow">→ 1 punto</span>
@@ -235,35 +193,32 @@
     <section id="premios" class="tab-content">
         <div class="content-container">
             <div class="info-card">
-                <h2 class="card-title">Nuestros Premios</h2>
-
-                <div class="dark-teal-header">PREMIO</div>
-                <div class="section-box prize-vip-box">
-                    <div class="vip-prize-content">
-                        <svg class="vip-icon" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M30 4 L56 30 L30 56 L4 30 Z" stroke="#26a69a" stroke-width="2.5" fill="rgba(38,166,154,0.08)"/>
-                            <path d="M30 16 L44 30 L30 44 L16 30 Z" stroke="#26a69a" stroke-width="1.5" fill="rgba(38,166,154,0.14)"/>
-                        </svg>
-                        <div class="vip-name">PASE DOBLE VIP</div>
-                        <p class="vip-note">El premio no es transferible ni canjeable por dinero en efectivo.</p>
+                <div class="card-title-wrap">
+                    <h2 class="card-title-highlighted">PREMIO</h2>
+                </div>
+                <div class="vip-prize-content">
+                    <div class="vip-horizontal">
+                        <img src="img/ticketdoble.png" alt="Ticket Doble VIP" class="vip-ticket-img">
+                        <span class="vip-name">PASE DOBLE VIP</span>
                     </div>
+                    <p class="vip-note">El premio no es transferible ni canjeable por dinero en efectivo.</p>
                 </div>
 
                 <!-- TÉRMINOS Y CONDICIONES -->
-                <div class="dark-teal-header" style="margin-top:32px;">TÉRMINOS Y CONDICIONES</div>
-                <div class="section-box terminos-box">
-                    <ul class="terminos-list">
-                        <li>* Participan únicamente personas mayores de <strong>18 años</strong>.</li>
-                        <li>* No podrán participar colaboradores de Batidos Pitaya.</li>
-                        <li>* Para reclamar el premio, el ganador deberá presentar su cédula de identidad vigente.</li>
-                        <li>* Los datos registrados deberán coincidir con los del documento de identidad.</li>
-                        <li>* Las facturas duplicadas, alteradas o fuera de fecha serán invalidadas.</li>
-                        <li>* El ganador será seleccionado mediante sorteo entre las participaciones válidas.</li>
-                        <li>* El premio no es transferible ni canjeable por dinero en efectivo.</li>
-                        <li>* Participar en la promoción implica la aceptación de estos términos y condiciones.</li>
-                        <li>* Solo serán válidas las facturas originales, legibles, completas y registradas durante la vigencia de la promoción.</li>
-                    </ul>
+                <div class="card-title-wrap" style="margin-top:32px;">
+                    <h3 class="card-title-highlighted card-title-dark">TÉRMINOS Y CONDICIONES</h3>
                 </div>
+                <ul class="terminos-list">
+                    <li>* Participan únicamente personas mayores de <strong>18 años</strong>.</li>
+                    <li>* No podrán participar colaboradores de Batidos Pitaya.</li>
+                    <li>* Para reclamar el premio, el ganador deberá presentar su cédula de identidad vigente.</li>
+                    <li>* Los datos registrados deberán coincidir con los del documento de identidad.</li>
+                    <li>* Las facturas duplicadas, alteradas o fuera de fecha serán invalidadas.</li>
+                    <li>* El ganador será seleccionado mediante sorteo entre las participaciones válidas.</li>
+                    <li>* El premio no es transferible ni canjeable por dinero en efectivo.</li>
+                    <li>* Participar en la promoción implica la aceptación de estos términos y condiciones.</li>
+                    <li>* Solo serán válidas las facturas originales, legibles, completas y registradas durante la vigencia de la promoción.</li>
+                </ul>
 
             </div>
         </div>

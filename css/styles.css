@@ -237,7 +237,7 @@ body {
 }
 .card-title-highlighted {
     display: inline-block;
-    background: var(--primary-teal);
+    background: var(--primary-teal);       /* #26a69a — teal claro */
     color: white;
     font-weight: 700;
     font-size: 1.3rem;
@@ -245,6 +245,11 @@ body {
     border-radius: 8px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+}
+/* Variante verde oscuro para sub-secciones (Acumulación, T&C) */
+.card-title-dark {
+    background: var(--dark-teal);          /* #004d40 */
+    font-size: 1.05rem;                    /* ligeramente más pequeño que el título principal */
 }
 
 /* ── Form Grid (también dentro del dark card) ── */
@@ -563,9 +568,14 @@ body {
     color: var(--text-dark);
 }
 .puntos-arrow {
-    color: var(--primary-teal);
+    color: var(--dark-teal);               /* #004d40 — verde oscuro */
     font-weight: 800;
     margin-left: 4px;
+}
+
+/* Contenedor de puntos sin caja bordeada */
+.puntos-section {
+    padding: 4px 0 20px;
 }
 
 /* ════════════════════════════════════════════
@@ -573,28 +583,31 @@ body {
    ════════════════════════════════════════════ */
 
 /* Premio VIP único */
-.prize-vip-box {
-    text-align: center;
-    margin-bottom: 0;
-}
 .vip-prize-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 14px 0;
+    padding: 20px 0;
+    text-align: center;
 }
-.vip-icon {
-    width: 64px;
-    height: 64px;
-    margin-bottom: 14px;
+/* Imagen + texto en fila horizontal */
+.vip-horizontal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 12px;
+}
+.vip-ticket-img {
+    width: 65px;
+    height: auto;
 }
 .vip-name {
     font-size: 1.75rem;
     font-weight: 900;
-    color: var(--dark-teal);
+    color: var(--dark-teal);               /* #004d40 */
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin-bottom: 10px;
 }
 .vip-note {
     font-size: 0.82rem;
