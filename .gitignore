@@ -10,3 +10,9 @@ node_modules/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Archivos sensibles y generados
+uploads/
+core/database/env.php
+img_bosquejos/
+*.log

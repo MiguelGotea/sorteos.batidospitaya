@@ -1,0 +1,28 @@
+# ==============================================================================
+# .HTACCESS - SORTEOS.BATIDOSPITAYA.COM
+# ==============================================================================
+
+RewriteEngine On
+
+DirectoryIndex index.php index.html
+
+# Seguridad
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+AddDefaultCharset UTF-8
+
+# Proteger carpeta core
+<IfModule mod_rewrite.c>
+    RewriteRule ^core/ - [F,L]
+</IfModule>
+
+# Proteger carpeta uploads (solo imágenes, sin ejecución PHP)
+<FilesMatch "\.php$">
+    <If "%{REQUEST_URI} =~ m#^/uploads/#">
+        Require all denied
+    </If>
+</FilesMatch>
