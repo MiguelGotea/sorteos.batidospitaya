@@ -26,3 +26,18 @@ AddDefaultCharset UTF-8
         Require all denied
     </If>
 </FilesMatch>
+
+# ─── Bloquear archivos sensibles accesibles por URL ──────────────────────────
+# README.md, archivos SQL, scripts, logs, configuraciones — no deben ser públicos
+<FilesMatch "\.(md|sql|log|sh|ps1|env|gitignore|yml|yaml|json|txt|bak|old)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Bloquear acceso a carpetas de desarrollo y configuración
+<IfModule mod_rewrite.c>
+    RewriteRule ^\.git/ - [F,L]
+    RewriteRule ^\.scripts/ - [F,L]
+    RewriteRule ^img_bosquejos/ - [F,L]
+</IfModule>
+
