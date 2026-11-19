@@ -70,6 +70,11 @@ CREATE TABLE IF NOT EXISTS `sorteos_registros` (
 
     `fecha_registro`        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
+    -- ── Restricción de duplicados: mismo código + misma sucursal + mismo sorteo ──
+    -- Las sucursales tienen correlativos propios (pueden repetirse entre sucursales)
+    -- pero NO dentro de la misma sucursal para el mismo sorteo
+    UNIQUE KEY `uk_codigo_sucursal_sorteo` (`codigo_participacion`, `sucursal_id`, `nombre_sorteo`),
+
     INDEX `idx_token_sesion`        (`token_sesion`),
     INDEX `idx_codigo_participacion`(`codigo_participacion`),
     INDEX `idx_nombre_sorteo`       (`nombre_sorteo`),
@@ -77,3 +82,10 @@ CREATE TABLE IF NOT EXISTS `sorteos_registros` (
     INDEX `idx_fecha_registro`      (`fecha_registro`),
     INDEX `idx_sucursal`            (`sucursal_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================================================
+-- Si la tabla YA existe y necesitas agregar la restricción:
+-- ALTER TABLE `sorteos_registros`
+--   ADD UNIQUE KEY `uk_codigo_sucursal_sorteo`
+--       (`codigo_participacion`, `sucursal_id`, `nombre_sorteo`);
+-- =============================================================================

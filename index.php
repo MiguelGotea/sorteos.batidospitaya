@@ -14,7 +14,7 @@
 
     <!-- Header -->
     <header class="page-header">
-        <img src="img/logo.png" alt="Batidos Pitaya" class="logo-top"
+        <img src="img/Logo.svg" alt="Batidos Pitaya" class="logo-top"
              onerror="this.style.display='none'; document.querySelector('.logo-fallback').style.display='block'">
         <div class="logo-fallback" style="display:none; font-size:1.8rem; font-weight:800; color:#26a69a;">PITAYA</div>
     </header>
