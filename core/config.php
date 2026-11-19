@@ -13,13 +13,19 @@
 // pasando esta misma clave como ?k=
 define('QR_SECRET', 'SORTEOS_2026_CONCIERTO_MARTINGARRIX_X9K7M');
 
-// ─── SWITCH: Restricción de Geolocalización ──────────────────────────────────
-// true  → el sistema verifica que el usuario esté cerca de una sucursal Pitaya
-//          (pide GPS, valida radio, guarda sucursal cercana en la sesión).
-// false → la restricción está DESACTIVADA: no se pide GPS, no se valida radio
-//          y la sesión se crea sin datos de sucursal (sucursal_id = null).
+// ─── SWITCH: Restricción de Geolocalización (GPS) ─────────────────────────────
+// true  → el sistema verifica que el usuario esté físicamente cerca de una sucursal Pitaya
+//          (solicita permisos de GPS en el navegador, valida radio de 2km).
+// false → la restricción de GPS está DESACTIVADA (no pide permisos de ubicación al usuario).
 // ─────────────────────────────────────────────────────────────────────────────
 define('GEO_RESTRICCION_ACTIVA', false);
+
+// ─── SWITCH: Validación de País (Nicaragua) sin requerir permisos ────────────
+// true  → comprueba que el participante esté en Nicaragua mediante IP (Cloudflare / GeoIP)
+//          y zona horaria, sin solicitar ningún permiso al usuario.
+// false → no valida país.
+// ─────────────────────────────────────────────────────────────────────────────
+define('VALIDAR_PAIS_NICARAGUA', true);
 
 // Radio permitido en metros (mismo que descubre)
 define('RADIO_METROS', 2000);

@@ -382,10 +382,11 @@
 
     async function callValidateAccess(k, lat, lng, accuracy) {
         try {
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
             const resp = await fetch('validate_access.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ k, lat, lng, accuracy })
+                body: JSON.stringify({ k, lat, lng, accuracy, timezone })
             });
             const data = await resp.json();
 

@@ -18,6 +18,16 @@ $k           = trim($input['k'] ?? '');
 $lat         = $input['lat'] ?? null;
 $lng         = $input['lng'] ?? null;
 $accuracy    = $input['accuracy'] ?? null;
+$timezone    = trim($input['timezone'] ?? '');
+
+// ─── IP del cliente ──────────────────────────────────────────────────────────
+$ip = $_SERVER['HTTP_CF_CONNECTING_IP']
+     ?? $_SERVER['HTTP_X_FORWARDED_FOR']
+     ?? $_SERVER['REMOTE_ADDR']
+     ?? '';
+if (strpos($ip, ',') !== false) {
+    $ip = trim(explode(',', $ip)[0]);
+}
 
 // ─── CAPA 1: Llave QR ────────────────────────────────────────────────────────
 if (empty($k) || $k !== QR_SECRET) {
@@ -25,6 +35,16 @@ if (empty($k) || $k !== QR_SECRET) {
     $response['error_type'] = 'INVALID_KEY';
     echo json_encode($response);
     exit;
+}
+
+// ─── CAPA 1.5: Verificación de País (Nicaragua, sin permisos de GPS) ─────────
+if (defined('VALIDAR_PAIS_NICARAGUA') && VALIDAR_PAIS_NICARAGUA) {
+    if (!validarPaisNicaragua($ip, $timezone)) {
+        $response['message']    = 'Esta promoción está disponible únicamente para participantes ubicados en Nicaragua.';
+        $response['error_type'] = 'COUNTRY_RESTRICTED';
+        echo json_encode($response);
+        exit;
+    }
 }
 
 // ─── CAPA 2: Geolocalización (controlada por GEO_RESTRICCION_ACTIVA) ─────────
@@ -113,3 +133,52 @@ $response['sucursal_id']      = $sucursalId;
 $response['sucursal_nombre']  = $sucursalNombre;
 
 echo json_encode($response);
+
+/**
+ * Valida si la conexión proviene de Nicaragua sin solicitar permisos de GPS al usuario.
+ * Métodos:
+ * 1. IPs locales o de desarrollo (127.0.0.1, privadas) -> permitido
+ * 2. Header de país de Cloudflare (HTTP_CF_IPCOUNTRY) -> evalúa 'NI'
+ * 3. Servicio GeoIP público rápido por IP (timeout 1.5s)
+ * 4. Fallback por zona horaria reportada por el navegador (America/Managua)
+ */
+function validarPaisNicaragua(string $ip, string $timezone = ''): bool
+{
+    // 1. IPs locales o de desarrollo
+    if (in_array($ip, ['127.0.0.1', '::1', '']) || 
+        filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+        return true;
+    }
+
+    // 2. Cloudflare Country Header
+    $cfCountry = strtoupper(trim($_SERVER['HTTP_CF_IPCOUNTRY'] ?? ''));
+    if (!empty($cfCountry) && $cfCountry !== 'XX' && $cfCountry !== 'T1') {
+        return ($cfCountry === 'NI');
+    }
+
+    // 3. Consulta GeoIP ligera (timeout estricto)
+    $ch = curl_init("http://ip-api.com/json/{$ip}?fields=status,countryCode");
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 2,
+        CURLOPT_CONNECTTIMEOUT => 1,
+    ]);
+    $res = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode === 200 && $res) {
+        $data = json_decode($res, true);
+        if (($data['status'] ?? '') === 'success' && !empty($data['countryCode'])) {
+            return (strtoupper($data['countryCode']) === 'NI');
+        }
+    }
+
+    // 4. Fallback por zona horaria del dispositivo
+    if (!empty($timezone) && $timezone === 'America/Managua') {
+        return true;
+    }
+
+    // Si los servicios externos fallan, se permite para no perjudicar a usuarios legítimos
+    return true;
+}
