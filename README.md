@@ -39,6 +39,9 @@ QR físico en sucursal
               └── validate_access.php
                    ├── Verifica ?k= (QR_SECRET)
                    ├── Pide geolocalización del dispositivo
+                   │    ├── Esperando → "Verificando ubicación / acepta el permiso..."
+                   │    ├── Denegado → "Activa tu ubicación" + instrucciones (no muestra Restringido)
+                   │    └── Error GPS → "Acceso Restringido" con motivo
                    ├── Haversine contra las 16 sucursales activas (radio 150 m)
                    └── Si OK → crea sesión en DB (token UUID, expira 30 min)
                         └── Formulario activo para 1 ticket
@@ -70,12 +73,18 @@ Se usa `AIService.php` ubicado en `api.batidospitaya.com/core/ai/AIService.php`.
 > ⚠️ **NUNCA mencionar "IA", "inteligencia artificial", "Vision API"** al usuario. Usar términos como "verificación del ticket" o "procesamiento de imagen".
 
 ### Relay de imagen (token protegido)
+
 ```
-index.php (usuario sube foto)
-    └── detect_invoice.php  (RELAY — sorteos frontend, sin keys)
+index.php (usuario sube foto + token_sesion)
+    └── detect_invoice.php  (RELAY — sorteos frontend)
+         ├── [FIX A] Valida que token_sesion no sea vacío
+         ├── [FIX B] Valida tamaño ≤ 8 MB
          └── POST → api.batidospitaya.com/api/sorteos/procesar_ticket.php
+              ├── [FIX A] Verifica sesión en DB (existe, no usada, no expirada)
               └── AIService.php ← accede a ia_proveedores_api (keys en DB)
+                   └── Responde JSON limpio (sin keys, sin raw text)
 ```
+
 El token de procesamiento **nunca sale del servidor API**. El frontend solo envía la imagen y recibe datos extraídos.
 
 ### Datos extraídos del ticket
@@ -146,6 +155,7 @@ Registra cada escaneo de QR válido. Una sesión = permiso para un registro.
 | `geo_lat / geo_lng` | Coordenadas donde escaneó |
 | `distancia_metros` | Distancia a la sucursal detectada |
 | `sucursal_id / nombre` | Sucursal detectada por GPS |
+| `ip_origen` | IP del cliente (usada para rate limiting) |
 | `expira_en` | 30 minutos desde creación |
 | `usado` | 1 = ya registró un ticket con esta sesión |
 
@@ -161,7 +171,7 @@ Registro de cada participación.
 | `es_club` | 0 = regular, 1 = Club Pitaya |
 | `puntos_sorteo` | Puntos calculados según política |
 | `validado_sistema` | NULL = pendiente, 1 = válido, 0 = inválido |
-| `foto_ticket` | Ruta en `api/uploads/tickets/` |
+| `foto_ticket` | Ruta en `uploads/tickets/` dentro de public_html del API |
 
 ---
 
@@ -172,8 +182,8 @@ Todos requieren header `X-Sorteos-Token`.
 | Archivo | Método | Descripción |
 |---|---|---|
 | `crear_sesion.php` | POST JSON | Crea sesión QR válida, retorna token |
-| `procesar_ticket.php` | POST multipart | Recibe imagen, extrae datos vía AIService |
-| `guardar_registro.php` | POST multipart | Guarda participación + foto |
+| `procesar_ticket.php` | POST multipart | Recibe imagen + token_sesion, verifica sesión, extrae datos vía AIService |
+| `guardar_registro.php` | POST multipart | Verifica límite IP, guarda participación + foto |
 | `listar_registros.php` | GET | Lista registros con filtros y paginación |
 | `validar_registro.php` | POST JSON | Actualiza `validado_sistema` de un registro |
 
@@ -200,14 +210,132 @@ Todos requieren header `X-Sorteos-Token`.
 | Componente | Detalle |
 |---|---|
 | Script push | `.scripts/gitpush_sorteos.ps1` — Script Tanque v7 Anti-Choque |
-| Workflow | `.github/workflows/deploy-sorteos.yml` — webfactory/ssh-agent pattern |
-| Secrets GitHub | `HOSTINGER_SSH_KEY`, `HOSTINGER_HOST`, `HOSTINGER_USER`, `HOSTINGER_PATH_SORTEOS` |
-| Exclusiones deploy | `img_bosquejos/`, `*.sql`, `*.md`, `uploads/` |
+| Workflow sorteos | `.github/workflows/deploy-sorteos.yml` — webfactory/ssh-agent pattern |
+| Workflow API | `.github/workflows/deploy-api.yml` — webfactory/ssh-agent pattern |
+| Secrets GitHub | `HOSTINGER_SSH_KEY`, `HOSTINGER_HOST`, `HOSTINGER_USER`, `HOSTINGER_PATH_SORTEOS`, `HOSTINGER_PATH_API` |
 | Logo | `img/Logo.svg` (SVG, L mayúscula) — NO usar `logo.png` |
+
+### Exclusiones rsync — sorteos
+```
+.git/  .github/  .scripts/  uploads/  img_bosquejos/  *.md  *.sql
+```
+
+### Exclusiones rsync — API
+```
+.git/  .github/  .scripts/  .agent/  .gitignore
+uploads/          ← carpeta raíz de public_html (creada/gestionada manualmente)
+api/uploads/      ← dentro de api/ (por si acaso)
+core/database/env.php
+core/database/env.production.php
+```
+
+> ⚠️ **El `.htaccess` del API no está en el repo (gitignore). Se sube/modifica manualmente en servidor.**  
+> ⚠️ **La carpeta `uploads/tickets/` se crea manualmente en el servidor. El deploy nunca la toca.**
 
 ---
 
-## 11. Sucursales Activas (hardcoded en `core/config.php`)
+## 11. Estructura de `uploads/` en el servidor API
+
+```
+public_html/            ← raíz del sitio api.batidospitaya.com
+├── api/
+│   └── sorteos/
+│       └── guardar_registro.php  → guarda en ../../uploads/tickets/
+├── uploads/            ← gestionada manualmente, excluida del deploy
+│   └── tickets/
+│       ├── .htaccess   ← Deny from all (subido manualmente)
+│       └── ticket_*.jpg
+└── .htaccess           ← gestionado manualmente, excluido del repo
+```
+
+**Path PHP desde `guardar_registro.php`:**
+```php
+$uploadDir = __DIR__ . '/../../uploads/tickets/';
+// __DIR__ = public_html/api/sorteos/
+// /../../  = public_html/
+// resultado = public_html/uploads/tickets/
+```
+
+---
+
+## 12. Seguridad — Vulnerabilidades Resueltas
+
+### Fix A — Sesión requerida antes de procesar imagen
+**Sin este fix:** cualquiera podía llamar a `detect_invoice.php` repetidamente sin QR, consumiendo créditos de procesamiento.
+
+**Implementación (triple validación):**
+1. `index.php` envía `token_sesion` al llamar `detect_invoice.php`
+2. `detect_invoice.php` rechaza si `token_sesion` está vacío
+3. `procesar_ticket.php` consulta DB: sesión debe existir, `usado=0`, no expirada
+
+### Fix B — Límite de tamaño de imagen
+En `detect_invoice.php`, antes de reenviar a la API:
+```php
+$MAX_BYTES = 8 * 1024 * 1024; // 8 MB
+if ($image['size'] > $MAX_BYTES) → error limpio, sin curl
+```
+
+### Fix C — Límite de 20 tickets por IP
+En `guardar_registro.php`, tras validar la sesión:
+```sql
+SELECT COUNT(*) FROM sorteos_registros r
+JOIN sorteos_sesiones_qr s ON s.token = r.token_sesion
+WHERE s.ip_origen = ? AND r.nombre_sorteo = 'concierto_martingarrix'
+```
+- Si ≥ 20 → HTTP 429 con `limit_reached: true`
+- `save_registration.php` propaga `limit_reached`
+- `index.php` reemplaza formulario con mensaje amigable:  
+  *"🎟️ Límite de participaciones alcanzado — Has registrado el máximo de 20 tickets"*
+
+### Fix F — Fotos de tickets no accesibles por URL
+`uploads/tickets/.htaccess` (subido manualmente al servidor):
+```apache
+Options -Indexes
+Require all denied
+```
+
+### Protección de archivos sensibles en sorteos — `.htaccess`
+Bloquea acceso HTTP a extensiones que nunca deben ser públicas:
+```apache
+<FilesMatch "\.(md|sql|log|sh|ps1|env|yml|yaml|json|txt|bak|old)$">
+    Deny from all
+</FilesMatch>
+```
+También bloquea carpetas: `.git/`, `.scripts/`, `img_bosquejos/`
+
+### Tabla resumen de seguridad
+
+| Riesgo | Mitigación |
+|---|---|
+| Exposición de API key de procesamiento | Keys solo en DB (`ia_proveedores_api`). `detect_invoice.php` es relay puro. |
+| Consumo de créditos IA sin QR | Fix A: sesión validada en DB antes de cualquier procesamiento |
+| Imagen gigante como DoS | Fix B: límite 8 MB en relay |
+| Spam de registros por IP | Fix C: máximo 20 tickets por IP por sorteo |
+| Ticket duplicado | UNIQUE KEY en DB + SELECT previo + PDOException catch (triple barrera) |
+| QR robado / compartido | Sesión expira en 30 min + `usado=1` al registrar |
+| Acceso sin QR | `?k=` obligatorio y validado con constante `QR_SECRET` |
+| Ticket falso | Validación diferida contra `VentasGlobalesAccessCSV` desde ERP |
+| Acceso fuera de sucursal | Haversine 150 m contra todas las sucursales activas |
+| Fotos de clientes accesibles por URL | Fix F: `Deny from all` en `uploads/tickets/.htaccess` |
+| README/SQL accesibles por URL | `.htaccess` sorteos bloquea `.md`, `.sql`, `.yml`, etc. |
+| Listado de directorios | `Options -Indexes` en todos los `.htaccess` |
+| Repositorio público | Repo en privado (D) |
+
+---
+
+## 13. UX de Geolocalización
+
+| Estado | Lo que ve el usuario |
+|---|---|
+| Esperando respuesta del diálogo | 📍 "Verificando ubicación / Por favor acepta el permiso..." |
+| Permiso denegado (error code 1) | 📍 "Activa tu ubicación" + instrucciones (candado → Permitir) |
+| GPS no disponible o timeout | 🔒 "Acceso Restringido" con motivo técnico |
+| Ubicación ok pero fuera de rango | 🔒 "Acceso Restringido" (mensaje del backend) |
+| Límite de 20 tickets alcanzado | 🎟️ "Límite de participaciones alcanzado" (reemplaza el formulario) |
+
+---
+
+## 14. Sucursales Activas (hardcoded en `core/config.php`)
 
 | # | Nombre | Lat | Lng |
 |---|---|---|---|
@@ -229,32 +357,20 @@ Todos requieren header `X-Sorteos-Token`.
 
 ---
 
-## 12. Checklist de Implementación
+## 15. Checklist de Implementación
 
-- [ ] Ejecutar `sorteos_tablas.sql` (o ALTER — ver sección 14)
+- [ ] Ejecutar `sorteos_tablas.sql` (o ALTER — ver sección 16)
 - [ ] Ejecutar `erp/modulos/marketing/sql/permisos_gestion_sorteos_conciertomartin.sql`
-- [ ] Crear carpeta `uploads/tickets/` en servidor API con permisos de escritura
+- [ ] Crear carpeta `uploads/tickets/` manualmente en `public_html/` del servidor API
+- [ ] Subir manualmente `uploads/tickets/.htaccess` con `Deny from all`
 - [ ] Verificar que `ia_proveedores_api` tenga keys activas para google / openai / groq
-- [ ] Push a rama main → GitHub Actions despliega automáticamente
+- [ ] Push a rama main de sorteos → GitHub Actions despliega automáticamente
 - [ ] Push en descubre → activa `.htaccess` de redirección del QR físico
 - [ ] Verificar acceso vía QR en al menos una sucursal real
 
 ---
 
-## 13. Consideraciones de Seguridad
-
-| Riesgo | Mitigación |
-|---|---|
-| Exposición de API key de procesamiento | Keys solo en DB (`ia_proveedores_api`). `detect_invoice.php` es relay puro sin keys. |
-| Ticket duplicado | UNIQUE KEY en DB + SELECT previo + PDOException catch (triple barrera) |
-| QR robado / compartido | Sesión expira en 30 min + `usado=1` al registrar |
-| Acceso sin QR | `?k=` obligatorio y validado con constante `QR_SECRET` |
-| Ticket falso | Validación diferida contra `VentasGlobalesAccessCSV` desde ERP |
-| Acceso fuera de sucursal | Haversine 150 m contra todas las sucursales activas |
-
----
-
-## 14. ALTER TABLE (Si las tablas ya existen)
+## 16. ALTER TABLE (Si las tablas ya existen)
 
 Si ya ejecutaste una versión anterior del SQL, aplica solo los cambios:
 
@@ -276,7 +392,7 @@ ALTER TABLE `sorteos_registros`
 
 ---
 
-## 15. Reutilización para Sorteos Futuros
+## 17. Reutilización para Sorteos Futuros
 
 La tabla `sorteos_registros` tiene `nombre_sorteo` para soportar múltiples sorteos. Para un sorteo nuevo:
 
