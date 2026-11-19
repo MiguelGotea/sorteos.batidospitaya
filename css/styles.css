@@ -10,37 +10,29 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Fondo único fijo para toda la página */
+/* ── Fondo fijo (aplica a toda la página, se ve detrás de todo) ── */
 body {
     font-family: 'Outfit', sans-serif;
     background-image: url('../img/fondo.JPEG');
     background-size: cover;
     background-attachment: fixed;
     background-position: center;
+    background-color: #0a1628;   /* fallback oscuro si la imagen tarda */
     color: var(--text-dark);
     min-height: 100vh;
 }
 
-/* ── Header ── */
-.page-header {
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(6px);
-    padding: 18px 0;
-    text-align: center;
-    width: 100%;
-    border-bottom: 2px solid rgba(38,166,154,0.2);
-}
-.logo-top { max-width: 220px; height: auto; }
-
-/* ── Tabs Nav ── */
+/* ════════════════════════════════════════════
+   NAV DE TABS  —  barra de navegación superior
+   ════════════════════════════════════════════ */
 .tabs-nav {
     display: flex;
     justify-content: center;
-    background: rgba(255,255,255,0.97);
+    background: var(--dark-teal);
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.35);
 }
 .tab-btn {
     padding: 15px 28px;
@@ -49,23 +41,24 @@ body {
     font-family: 'Outfit', sans-serif;
     font-size: 0.95rem;
     font-weight: 700;
-    color: #90a4ae;
+    color: rgba(255,255,255,0.55);
     cursor: pointer;
     transition: all 0.3s ease;
     text-transform: uppercase;
     position: relative;
 }
-.tab-btn.active { color: var(--primary-teal); }
+.tab-btn:hover { color: rgba(255,255,255,0.88); }
+.tab-btn.active { color: #ffffff; }
 .tab-btn.active::after {
     content: "";
     position: absolute;
     bottom: 0; left: 15%;
-    width: 70%; height: 4px;
+    width: 70%; height: 3px;
     background: var(--primary-teal);
     border-radius: 2px;
 }
 
-/* ── Tab content ── */
+/* ── Animación de pestañas ── */
 .tab-content { display: none; animation: fadeIn 0.4s ease; }
 .tab-content.active { display: block; }
 
@@ -74,19 +67,158 @@ body {
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Contenedor principal (sin hero) ── */
+/* ════════════════════════════════════════════
+   TAB REGISTRO  —  HERO OSCURO + FORMULARIO
+   ════════════════════════════════════════════ */
+
+/* Hero section — el fondo del body se ve a través */
+.registro-hero {
+    text-align: center;
+    padding: 52px 20px 32px;
+    /* leve gradiente para legibilidad del texto */
+    background: linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 100%);
+    color: white;
+    text-shadow: 0 2px 14px rgba(0,0,0,0.65);
+}
+
+.hero-logo {
+    max-width: 170px;
+    height: auto;
+    display: block;
+    margin: 0 auto 16px;
+    /* Convierte cualquier color del SVG a blanco */
+    filter: brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+}
+
+.hero-te-lleva {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.88);
+    margin-bottom: 6px;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.hero-artist {
+    font-size: clamp(2.2rem, 9vw, 4rem);
+    font-weight: 900;
+    color: white;
+    letter-spacing: 0.03em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    line-height: 1.1;
+}
+
+.plus-sign {
+    color: var(--primary-teal);
+}
+
+.hero-event-info {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.72);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+/* Área del formulario centrada bajo el hero */
+.registro-content {
+    padding: 10px 15px 60px;
+    max-width: 580px;
+    margin: 0 auto;
+}
+
+/* Tarjeta oscura semi-transparente */
+.form-dark-card {
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 20px;
+    padding: 32px 28px;
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+/* Título del formulario dentro del card oscuro */
+.form-dark-title {
+    color: var(--primary-teal);
+    text-align: center;
+    margin-bottom: 28px;
+    font-size: 1.15rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Etiqueta para secciones sin form-group (Foto, Puntos) */
+.dark-label {
+    display: block;
+    font-weight: 700;
+    color: rgba(255,255,255,0.88);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 8px;
+}
+
+/* ── Overrides de formulario para el card oscuro ── */
+.form-dark-card .form-group label {
+    color: rgba(255,255,255,0.88);
+}
+
+.form-dark-card .form-group input {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: white;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s;
+    width: 100%;
+}
+.form-dark-card .form-group input::placeholder {
+    color: rgba(255,255,255,0.32);
+}
+.form-dark-card .form-group input:focus {
+    background: rgba(38,166,154,0.18);
+    box-shadow: 0 0 0 2px var(--primary-teal);
+    border-color: var(--primary-teal);
+}
+.form-dark-card .form-group input[readonly] {
+    background: rgba(0,0,0,0.25);
+    color: rgba(255,255,255,0.45);
+    border-color: rgba(255,255,255,0.08);
+    cursor: not-allowed;
+}
+
+/* Lock message sobre fondo oscuro */
+.form-dark-card .lock-message h2 { color: white; }
+.form-dark-card .lock-message p  { color: rgba(255,255,255,0.68); }
+
+/* Puntos box sobre fondo oscuro */
+.form-dark-card .puntos-display-box {
+    background: linear-gradient(135deg, rgba(38,166,154,0.2), rgba(38,166,154,0.08));
+    border-color: var(--primary-teal);
+}
+.form-dark-card .puntos-display-box .puntos-label {
+    color: rgba(255,255,255,0.65);
+}
+
+/* ════════════════════════════════════════════
+   TABS DE INFORMACIÓN  —  tarjeta blanca
+   ════════════════════════════════════════════ */
+
 .content-container {
     max-width: 900px;
     margin: 40px auto 50px;
     padding: 0 15px;
 }
 
-/* ── Info Card ── */
 .info-card {
     background: rgba(255,255,255,0.97);
     border-radius: 24px;
     padding: 40px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.14);
 }
 
 .card-title {
@@ -98,7 +230,7 @@ body {
     text-transform: uppercase;
 }
 
-/* ── Form Grid ── */
+/* ── Form Grid (también dentro del dark card) ── */
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -140,7 +272,7 @@ body {
     color: #546e7a;
 }
 
-/* ── Camera ── */
+/* ── Cámara ── */
 .camera-btn {
     display: block;
     width: 100%;
@@ -171,7 +303,6 @@ body {
 #cameraModal.active { display: flex; }
 
 .camera-content { max-width: 90%; max-height: 90%; text-align: center; }
-
 .camera-container { position: relative; width: 100%; max-width: 640px; margin: 0 auto; }
 
 #video {
@@ -180,7 +311,6 @@ body {
 }
 #canvas { display: none; }
 
-/* Overlay con guías visuales */
 .camera-overlay {
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
@@ -310,22 +440,65 @@ body {
 }
 .success-btn:hover { background: #1d8c82; transform: translateY(-2px); }
 
-/* ── Sección "Cómo Participar" ── */
-.steps-container {
-    display: flex; justify-content: center; gap: 30px;
-    margin: 30px 0; flex-wrap: wrap;
-}
-.step-item { text-align: center; max-width: 200px; }
-.step-number {
-    width: 48px; height: 48px; border-radius: 50%;
-    background: var(--primary-teal); color: white;
-    font-size: 1.3rem; font-weight: 800;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 12px;
-}
-.step-item h4 { color: var(--primary-teal); font-weight: 700; margin-bottom: 7px; }
-.step-item p  { font-size: 0.85rem; color: #666; line-height: 1.4; }
+/* ════════════════════════════════════════════
+   TAB CÓMO PARTICIPAR
+   ════════════════════════════════════════════ */
 
+.participation-intro {
+    text-align: center;
+    color: #546e7a;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    margin: 0 auto 32px;
+    max-width: 530px;
+}
+
+/* Contenedor de los 2 pasos con iconos */
+.icon-steps-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0 auto 24px;
+    max-width: 540px;
+}
+
+.icon-step {
+    text-align: center;
+    flex: 1;
+    padding: 0 24px;
+}
+
+/* Divisor vertical entre los dos pasos */
+.icon-step-divider {
+    width: 1px;
+    height: 110px;
+    background: rgba(38,166,154,0.3);
+    align-self: center;
+    flex-shrink: 0;
+    margin-top: -16px;
+}
+
+.step-svg-icon {
+    width: 82px;
+    height: 82px;
+    display: block;
+    margin: 0 auto 14px;
+}
+
+.icon-step h4 {
+    color: var(--primary-teal);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 7px;
+}
+
+.icon-step p {
+    font-size: 0.84rem;
+    color: #666;
+    line-height: 1.45;
+}
+
+/* ── Secciones compartidas info tabs ── */
 .dark-teal-header {
     background: var(--dark-teal); color: white;
     padding: 10px; text-align: center; font-weight: 700;
@@ -344,7 +517,10 @@ body {
 
 .note-footer { text-align: center; font-size: 0.8rem; color: #888; margin-top: 20px; font-style: italic; }
 
-/* ── Premios ── */
+/* ════════════════════════════════════════════
+   TAB PREMIOS
+   ════════════════════════════════════════════ */
+
 .prizes-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
 .prize-block {
     border: 1px solid #e0e0e0; border-radius: 16px;
@@ -359,12 +535,68 @@ body {
 .prize-list li { position: relative; padding-left: 14px; margin-bottom: 8px; }
 .prize-list li::before { content: "●"; position: absolute; left: 0; color: var(--primary-teal); }
 
-/* ── Responsive ── */
+/* Términos y Condiciones */
+.terminos-box {
+    border-radius: 0 0 16px 16px;
+    padding: 20px 24px;
+    margin-bottom: 0;
+}
+
+.terminos-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.terminos-list li {
+    padding: 9px 0 9px 22px;
+    position: relative;
+    font-size: 0.88rem;
+    color: var(--text-dark);
+    border-bottom: 1px dashed rgba(38,166,154,0.2);
+    line-height: 1.5;
+}
+
+.terminos-list li:last-child {
+    border-bottom: none;
+    padding-bottom: 4px;
+}
+
+.terminos-list li::before {
+    content: "*";
+    position: absolute;
+    left: 4px;
+    color: var(--primary-teal);
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════ */
 @media (max-width: 700px) {
     .info-card { padding: 24px 18px; }
     .form-grid { grid-template-columns: 1fr; }
     .prizes-container { grid-template-columns: 1fr; }
-    .steps-container { flex-direction: column; align-items: center; }
+
+    /* Pasos verticales en móvil */
+    .icon-steps-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+    }
+    .icon-step-divider {
+        width: 60px;
+        height: 1px;
+        margin: 10px 0;
+        align-self: auto;
+    }
+    .icon-step { padding: 0 10px; }
+
     .tabs-nav { overflow-x: auto; justify-content: flex-start; }
-    .tab-btn { padding: 12px 18px; font-size: 0.85rem; }
+    .tab-btn  { padding: 12px 18px; font-size: 0.85rem; }
+
+    .form-dark-card  { padding: 24px 18px; }
+    .hero-artist     { font-size: 2rem; }
+    .registro-hero   { padding: 36px 16px 24px; }
 }

@@ -12,13 +12,6 @@
 </head>
 <body>
 
-    <!-- Header -->
-    <header class="page-header">
-        <img src="img/Logo.svg" alt="Batidos Pitaya" class="logo-top"
-             onerror="this.style.display='none'; document.querySelector('.logo-fallback').style.display='block'">
-        <div class="logo-fallback" style="display:none; font-size:1.8rem; font-weight:800; color:#26a69a;">PITAYA</div>
-    </header>
-
     <!-- Tabs de navegación (siempre visibles) -->
     <nav class="tabs-nav">
         <button class="tab-btn active" onclick="showTab('registro', event)">Registro</button>
@@ -28,8 +21,20 @@
 
     <!-- ─── TAB 1: REGISTRO ─────────────────────────────────────────── -->
     <section id="registro" class="tab-content active">
-        <div class="content-container">
-            <div class="info-card">
+
+        <!-- Hero: Logo + Evento sobre la imagen de fondo -->
+        <div class="registro-hero">
+            <img src="img/Logo.svg" alt="Batidos Pitaya" class="hero-logo"
+                 onerror="this.onerror=null; this.style.display='none'; document.getElementById('heroLogoFallback').style.display='block'">
+            <div id="heroLogoFallback" style="display:none; font-size:2rem; font-weight:900; color:white; letter-spacing:0.1em; margin-bottom:14px;">PITAYA</div>
+            <p class="hero-te-lleva">te lleva al concierto de</p>
+            <h1 class="hero-artist">MAR<span class="plus-sign">+</span>IN GARRIX</h1>
+            <p class="hero-event-info">28 NOV | ESTADIO NACIONAL SOBERANÍA</p>
+        </div>
+
+        <!-- Formulario sobre fondo oscuro -->
+        <div class="registro-content">
+            <div class="form-dark-card">
 
                 <!-- Mensaje de acceso bloqueado (default: visible hasta que QR válido) -->
                 <div id="qrRequiredMessage" class="lock-message">
@@ -42,17 +47,11 @@
                 <!-- Formulario (oculto hasta QR válido) -->
                 <form id="registrationForm" enctype="multipart/form-data" style="display:none;">
 
-                    <h3 style="color:var(--primary-teal); text-align:center; margin-bottom:28px;
-                               font-size:1.25rem; text-transform:uppercase; letter-spacing:0.04em;">
-                        📋 Registro de Participación
-                    </h3>
+                    <h3 class="form-dark-title">📋 Registro de Participación</h3>
 
                     <!-- Paso 1: Foto del ticket -->
                     <div style="margin-bottom:24px;">
-                        <label style="font-weight:700; color:var(--primary-teal); font-size:0.82rem;
-                                      text-transform:uppercase; letter-spacing:0.03em; display:block; margin-bottom:8px;">
-                            Foto del Ticket *
-                        </label>
+                        <label class="dark-label">Foto del Ticket *</label>
                         <div class="camera-container" style="max-width:100%;">
                             <button type="button" class="camera-btn" id="cameraOpenBtn" onclick="openCamera()">
                                 📷 Tomar foto del ticket
@@ -72,10 +71,7 @@
 
                     <!-- Puntos asignados (calculados del monto) -->
                     <div id="puntosContainer" style="display:none; margin-bottom:20px;">
-                        <label style="font-weight:700; color:var(--primary-teal); font-size:0.82rem;
-                                      text-transform:uppercase; letter-spacing:0.03em; display:block; margin-bottom:8px;">
-                            Puntos de Sorteo
-                        </label>
+                        <label class="dark-label">Puntos de Sorteo</label>
                         <div class="puntos-display-box">
                             <span class="puntos-valor" id="puntosValor">0</span>
                             <span class="puntos-label">punto(s) acumulado(s)</span>
@@ -135,23 +131,84 @@
             <div class="info-card">
                 <h2 class="card-title">¿Cómo Participar?</h2>
 
-                <div class="steps-container">
-                    <div class="step-item">
-                        <div class="step-number">1</div>
-                        <h4>Escanea el QR</h4>
-                        <p>Escanea el código QR disponible en tu sucursal Pitaya con la cámara de tu celular.</p>
+                <p class="participation-intro">
+                    La participación se realizará mediante la acumulación de puntos, los cuales se
+                    convertirán automáticamente en acciones para el sorteo.
+                </p>
+
+                <!-- Pasos con iconos SVG -->
+                <div class="icon-steps-container">
+
+                    <!-- Paso 1: Escanear QR -->
+                    <div class="icon-step">
+                        <div class="icon-step-icon">
+                            <svg class="step-svg-icon" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Cuerpo del teléfono -->
+                                <rect x="18" y="4" width="28" height="52" rx="6" stroke="#26a69a" stroke-width="2.5"/>
+                                <!-- Altavoz superior -->
+                                <line x1="29" y1="11" x2="37" y2="11" stroke="#26a69a" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- Indicador home -->
+                                <line x1="29" y1="51" x2="37" y2="51" stroke="#26a69a" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- Pantalla -->
+                                <rect x="22" y="16" width="20" height="27" rx="2" stroke="#26a69a" stroke-width="1.2" fill="rgba(38,166,154,0.06)"/>
+                                <!-- QR esquina sup-izq -->
+                                <rect x="24" y="18" width="6" height="6" rx="1" stroke="#26a69a" stroke-width="1.5"/>
+                                <rect x="25.5" y="19.5" width="3" height="3" fill="#26a69a"/>
+                                <!-- QR esquina sup-der -->
+                                <rect x="34" y="18" width="6" height="6" rx="1" stroke="#26a69a" stroke-width="1.5"/>
+                                <rect x="35.5" y="19.5" width="3" height="3" fill="#26a69a"/>
+                                <!-- QR esquina inf-izq -->
+                                <rect x="24" y="29" width="6" height="6" rx="1" stroke="#26a69a" stroke-width="1.5"/>
+                                <rect x="25.5" y="30.5" width="3" height="3" fill="#26a69a"/>
+                                <!-- Patrón centro QR -->
+                                <line x1="34" y1="29" x2="40" y2="29" stroke="#26a69a" stroke-width="1.5" stroke-linecap="round"/>
+                                <line x1="34" y1="32" x2="38" y2="32" stroke="#26a69a" stroke-width="1.5" stroke-linecap="round"/>
+                                <line x1="38" y1="32" x2="38" y2="35" stroke="#26a69a" stroke-width="1.5" stroke-linecap="round"/>
+                                <line x1="34" y1="35" x2="40" y2="35" stroke="#26a69a" stroke-width="1.5" stroke-linecap="round"/>
+                                <!-- Líneas de escaneo izquierda -->
+                                <line x1="4"  y1="24" x2="13" y2="24" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="4"  y1="29" x2="13" y2="29" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="4"  y1="34" x2="13" y2="34" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
+                                <!-- Líneas de escaneo derecha -->
+                                <line x1="51" y1="24" x2="60" y2="24" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="51" y1="29" x2="60" y2="29" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="51" y1="34" x2="60" y2="34" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h4>Escanear el código QR</h4>
+                        <p>Ubicado en sucursales Pitaya<br>y redes sociales.</p>
                     </div>
-                    <div class="step-item">
-                        <div class="step-number">2</div>
-                        <h4>Registra tu Ticket</h4>
-                        <p>Toma una foto de tu ticket, llena tus datos y envía el formulario de participación.</p>
+
+                    <div class="icon-step-divider"></div>
+
+                    <!-- Paso 2: Formulario -->
+                    <div class="icon-step">
+                        <div class="icon-step-icon">
+                            <svg class="step-svg-icon" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Cuerpo del documento -->
+                                <path d="M10 6 L10 64 L50 64 L50 20 L38 6 Z" stroke="#26a69a" stroke-width="2.5" stroke-linejoin="round"/>
+                                <!-- Esquina doblada -->
+                                <path d="M38 6 L38 20 L50 20" stroke="#26a69a" stroke-width="2" stroke-linejoin="round"/>
+                                <!-- Líneas de formulario -->
+                                <line x1="17" y1="30" x2="43" y2="30" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="17" y1="38" x2="43" y2="38" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
+                                <line x1="17" y1="46" x2="30" y2="46" stroke="#26a69a" stroke-width="2" stroke-linecap="round"/>
+                                <!-- Círculo check -->
+                                <circle cx="42" cy="52" r="9" fill="rgba(38,166,154,0.12)" stroke="#26a69a" stroke-width="2"/>
+                                <!-- Palomita -->
+                                <path d="M37 52 L40 55 L48 45" stroke="#26a69a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h4>Completar el formulario Digital</h4>
+                        <p>Datos personales, Fotografía de la factura*<br>Conservar la factura original.</p>
                     </div>
-                    <div class="step-item">
-                        <div class="step-number">3</div>
-                        <h4>¡Acumula Puntos!</h4>
-                        <p>Registra todos tus tickets. ¡A más puntos, más oportunidades de ganar!</p>
-                    </div>
+
                 </div>
+
+                <p class="note-footer" style="margin-top:4px; margin-bottom:28px;">
+                    *Facturas ilegibles, incompletas, alteradas, duplicadas, fuera de fecha<br>
+                    o no registradas vía QR serán automáticamente invalidadas.
+                </p>
 
                 <div class="dark-teal-header">ACUMULACIÓN DE PUNTOS POR MONTO DE COMPRA</div>
                 <div class="section-box">
@@ -217,10 +274,27 @@
                     </div>
                 </div>
 
-                <p class="note-footer" style="margin-top:28px;">
+                <p class="note-footer" style="margin-top:20px;">
                     *Cada participante podrá resultar ganador de 1 solo premio durante el sorteo.<br>
                     Los premios no son transferibles ni canjeables por dinero en efectivo.
                 </p>
+
+                <!-- TÉRMINOS Y CONDICIONES -->
+                <div class="dark-teal-header" style="margin-top:32px;">TÉRMINOS Y CONDICIONES</div>
+                <div class="section-box terminos-box">
+                    <ul class="terminos-list">
+                        <li>Participan únicamente personas mayores de <strong>18 años</strong>.</li>
+                        <li>No podrán participar colaboradores de Batidos Pitaya.</li>
+                        <li>Para reclamar el premio, el ganador deberá presentar su cédula de identidad vigente.</li>
+                        <li>Los datos registrados deberán coincidir con los del documento de identidad.</li>
+                        <li>Las facturas duplicadas, alteradas o fuera de fecha serán invalidadas.</li>
+                        <li>El ganador será seleccionado mediante sorteo entre las participaciones válidas.</li>
+                        <li>El premio no es transferible ni canjeable por dinero en efectivo.</li>
+                        <li>Participar en la promoción implica la aceptación de estos términos y condiciones.</li>
+                        <li>Solo serán válidas las facturas originales, legibles, completas y registradas durante la vigencia de la promoción.</li>
+                    </ul>
+                </div>
+
             </div>
         </div>
     </section>
@@ -375,7 +449,6 @@
 
     function showLocationWaiting() {
         // Mensaje neutral mientras el navegador pregunta por la ubicación
-        // No dice "Restringido" — el usuario aún no respondió
         const el = document.getElementById('qrRequiredMessage');
         el.innerHTML = `
             <div class="lock-icon" style="font-size:2.2rem">📍</div>
@@ -395,7 +468,7 @@
             <h2>Activa tu ubicación</h2>
             <p>Para validar tu participación necesitamos verificar que estás en una sucursal Pitaya.</p>
             <p><strong>¿Cómo activar la ubicación?</strong><br>
-               Busca el ícono de candado 🔒 o de información ℹ️ junto a la dirección del sitio, 
+               Busca el ícono de candado 🔒 o de información ℹ️ junto a la dirección del sitio,
                cambia el permiso de <em>Ubicación</em> a <strong>Permitir</strong> y recarga la página.</p>
         `;
         el.style.display = 'block';
@@ -516,12 +589,12 @@
             return;
         }
         if (!document.getElementById('codigo_participacion').value) {
-            showMsg('El código de participación no fue leído. Reintenta la foto del ticket.', 'red');
+            showMsg('El código de participación no fue leído. Reintenta la foto del ticket.', '#ff6b6b');
             return;
         }
         // ia_sucursal_nombre obligatorio para prevenir duplicados
         if (!document.getElementById('h_ia_sucursal_nombre').value) {
-            showMsg('No se pudo identificar la sucursal del ticket. Reintenta la foto.', 'red');
+            showMsg('No se pudo identificar la sucursal del ticket. Reintenta la foto.', '#ff6b6b');
             return;
         }
 
@@ -547,7 +620,7 @@
                 document.getElementById('puntosContainer').style.display = 'none';
                 showMsg('', '');
             } else if (data.limit_reached) {
-                // Fix C: límite de 20 tickets por dispositivo alcanzado
+                // Límite de 20 tickets por dispositivo alcanzado
                 document.getElementById('registrationForm').style.display = 'none';
                 const el = document.getElementById('qrRequiredMessage');
                 el.innerHTML = `
@@ -558,11 +631,11 @@
                 `;
                 el.style.display = 'block';
             } else {
-                showMsg('Error: ' + (data.message || 'Intenta nuevamente.'), 'red');
+                showMsg('Error: ' + (data.message || 'Intenta nuevamente.'), '#ff6b6b');
                 document.getElementById('submitBtn').disabled = false;
             }
         } catch(e) {
-            showMsg('Error de conexión. Intenta nuevamente.', 'red');
+            showMsg('Error de conexión. Intenta nuevamente.', '#ff6b6b');
             document.getElementById('submitBtn').disabled = false;
         }
     });
