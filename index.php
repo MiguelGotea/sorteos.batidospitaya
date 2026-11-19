@@ -299,9 +299,9 @@
         // Limpiar la URL
         window.history.replaceState({}, document.title, window.location.pathname);
 
-        // Pedir geolocalización
-        showValidationStatus('Verificando tu ubicación...', 'info');
-        document.getElementById('qrRequiredMessage').style.display = 'block';
+        // Pedir geolocalización — mostrar espera ANTES del diálogo del navegador
+        // No mostramos "Acceso Restringido" hasta saber qué respondió el usuario
+        showLocationWaiting();
 
         if (!navigator.geolocation) {
             showLockMessage('Tu navegador no soporta geolocalización. Usa un navegador actualizado.');
@@ -311,12 +311,16 @@
         navigator.geolocation.getCurrentPosition(
             pos => callValidateAccess(k, pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy),
             err => {
-                const msgs = {
-                    1: 'Debes permitir el acceso a tu ubicación para participar.',
-                    2: 'No se pudo obtener tu ubicación. Verifica el GPS y reintenta.',
-                    3: 'El tiempo de espera de ubicación expiró. Recarga e intenta nuevamente.',
-                };
-                showLockMessage(msgs[err.code] || 'Error al obtener ubicación.');
+                if (err.code === 1) {
+                    // Permiso denegado → mensaje específico para activar ubicación
+                    showLocationDenied();
+                } else {
+                    const msgs = {
+                        2: 'No se pudo obtener tu ubicación. Verifica que el GPS esté activo y reintenta.',
+                        3: 'El tiempo de espera de ubicación expiró. Recarga la página e intenta nuevamente.',
+                    };
+                    showLockMessage(msgs[err.code] || 'Error al obtener ubicación.');
+                }
             },
             { timeout: 15000, enableHighAccuracy: true }
         );
@@ -364,6 +368,35 @@
             <div class="lock-icon">🔒</div>
             <h2>Acceso Restringido</h2>
             <p>${escHtml(msg)}</p>
+        `;
+        el.style.display = 'block';
+        document.getElementById('registrationForm').style.display = 'none';
+    }
+
+    function showLocationWaiting() {
+        // Mensaje neutral mientras el navegador pregunta por la ubicación
+        // No dice "Restringido" — el usuario aún no respondió
+        const el = document.getElementById('qrRequiredMessage');
+        el.innerHTML = `
+            <div class="lock-icon" style="font-size:2.2rem">📍</div>
+            <h2>Verificando ubicación</h2>
+            <p>Necesitamos confirmar que estás en una sucursal Pitaya.<br>
+               <strong>Por favor acepta el permiso de ubicación</strong> que aparece en tu pantalla.</p>
+        `;
+        el.style.display = 'block';
+        document.getElementById('registrationForm').style.display = 'none';
+    }
+
+    function showLocationDenied() {
+        // Permiso explícitamente denegado → instrucciones claras para activarlo
+        const el = document.getElementById('qrRequiredMessage');
+        el.innerHTML = `
+            <div class="lock-icon" style="font-size:2.2rem">📍</div>
+            <h2>Activa tu ubicación</h2>
+            <p>Para validar tu participación necesitamos verificar que estás en una sucursal Pitaya.</p>
+            <p><strong>¿Cómo activar la ubicación?</strong><br>
+               Busca el ícono de candado 🔒 o de información ℹ️ junto a la dirección del sitio, 
+               cambia el permiso de <em>Ubicación</em> a <strong>Permitir</strong> y recarga la página.</p>
         `;
         el.style.display = 'block';
         document.getElementById('registrationForm').style.display = 'none';
