@@ -217,7 +217,8 @@ body {
 .info-card {
     background: rgba(255,255,255,0.97);
     border-radius: 24px;
-    padding: 40px;
+    padding: 0;
+    overflow: hidden;
     box-shadow: 0 20px 50px rgba(0,0,0,0.14);
 }
 
@@ -233,11 +234,11 @@ body {
 /* Título con caja verde destacada (ej: ¿Cómo Participar?) */
 .card-title-wrap {
     text-align: center;
-    margin-bottom: 28px;
+    margin-bottom: 0;
 }
 .card-title-highlighted {
     display: inline-block;
-    background: var(--primary-teal);       /* #26a69a — teal claro */
+    background: var(--dark-teal);          /* #004d40 — verde oscuro */
     color: white;
     font-weight: 700;
     font-size: 1.3rem;
@@ -246,10 +247,9 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
-/* Variante verde oscuro para sub-secciones (Acumulación, T&C) */
+/* Variante sub-sección (mismo color base, tamaño ligeramente menor) */
 .card-title-dark {
-    background: var(--dark-teal);          /* #004d40 */
-    font-size: 1.05rem;                    /* ligeramente más pequeño que el título principal */
+    font-size: 1.05rem;
 }
 
 /* ── Form Grid (también dentro del dark card) ── */
@@ -572,6 +572,17 @@ body {
     font-weight: 800;
     margin-left: 4px;
 }
+/* Valor resaltado (C$250.00) */
+.puntos-amount {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--dark-teal);
+}
+/* Número de puntos (1, 2) */
+.puntos-num {
+    font-size: 1.3rem;
+    font-weight: 900;
+}
 
 /* Contenedor de puntos sin caja bordeada */
 .puntos-section {
@@ -641,11 +652,24 @@ body {
     padding-bottom: 4px;
 }
 
+/* ── Segmentos alternos dentro de info-card ── */
+.tab-segment {
+    padding: 36px 40px;
+}
+.tab-segment:first-child {
+    border-radius: 24px 24px 0 0;
+}
+.tab-segment:last-child {
+    border-radius: 0 0 24px 24px;
+}
+.seg-white { background: #ffffff; }
+.seg-gray  { background: #f4f5f5; }
+
 /* ════════════════════════════════════════════
    RESPONSIVE
    ════════════════════════════════════════════ */
 @media (max-width: 700px) {
-    .info-card { padding: 24px 18px; }
+    .tab-segment { padding: 24px 18px; }
     .form-grid { grid-template-columns: 1fr; }
     .prizes-container { grid-template-columns: 1fr; }
 

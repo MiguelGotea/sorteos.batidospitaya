@@ -129,62 +129,70 @@
     <section id="como-participar" class="tab-content">
         <div class="content-container">
             <div class="info-card">
-                <div class="card-title-wrap">
-                    <h2 class="card-title-highlighted">¿Cómo Participar?</h2>
-                </div>
 
-                <p class="participation-intro">
-                    La participación se realizará mediante la acumulación de puntos, los cuales se
-                    convertirán automáticamente en acciones para el sorteo.
-                </p>
+                <!-- SEGMENTO 1: Pasos -->
+                <div class="tab-segment seg-white">
+                    <div class="card-title-wrap">
+                        <h2 class="card-title-highlighted">¿Cómo Participar?</h2>
+                    </div>
 
-                <!-- Pasos con iconos SVG -->
-                <div class="icon-steps-container">
+                    <p class="participation-intro" style="margin-top:24px;">
+                        La participación se realizará mediante la acumulación de puntos, los cuales se
+                        convertirán automáticamente en acciones para el sorteo.
+                    </p>
 
-                    <!-- Paso 1: Escanear QR -->
-                    <div class="icon-step">
-                        <div class="icon-step-icon">
-                            <img src="img/escanearcodigo.png" alt="Escanear código QR" class="step-svg-icon">
+                    <!-- Pasos con imágenes -->
+                    <div class="icon-steps-container">
+
+                        <!-- Paso 1: Escanear QR -->
+                        <div class="icon-step">
+                            <div class="icon-step-icon">
+                                <img src="img/escanearcodigo.png" alt="Escanear código QR" class="step-svg-icon">
+                            </div>
+                            <h4>Escanear el código QR</h4>
+                            <p>Ubicado en sucursales Pitaya<br>y redes sociales.</p>
                         </div>
-                        <h4>Escanear el código QR</h4>
-                        <p>Ubicado en sucursales Pitaya<br>y redes sociales.</p>
-                    </div>
 
-                    <div class="icon-step-divider"></div>
+                        <div class="icon-step-divider"></div>
 
-                    <!-- Paso 2: Formulario -->
-                    <div class="icon-step">
-                        <div class="icon-step-icon">
-                            <img src="img/completarformulario.png" alt="Completar formulario Digital" class="step-svg-icon">
+                        <!-- Paso 2: Formulario -->
+                        <div class="icon-step">
+                            <div class="icon-step-icon">
+                                <img src="img/completarformulario.png" alt="Completar formulario Digital" class="step-svg-icon">
+                            </div>
+                            <h4>Completar el formulario Digital</h4>
+                            <p>Datos personales, Fotografía de la factura*<br>Conservar la factura original.</p>
                         </div>
-                        <h4>Completar el formulario Digital</h4>
-                        <p>Datos personales, Fotografía de la factura*<br>Conservar la factura original.</p>
+
                     </div>
 
-                </div>
-
-                <p class="note-footer" style="margin-top:4px; margin-bottom:28px;">
-                    *Facturas ilegibles, incompletas, alteradas, duplicadas, fuera de fecha<br>
-                    o no registradas vía QR serán automáticamente invalidadas.
-                </p>
-
-                <div class="card-title-wrap">
-                    <h3 class="card-title-highlighted card-title-dark">ACUMULACIÓN DE PUNTOS POR MONTO DE COMPRA</h3>
-                </div>
-                <div class="puntos-section">
-                    <div class="section-divider-label">• CLIENTE REGULAR •</div>
-                    <div class="puntos-centered-row">
-                        Por cada <strong>C$250.00</strong> en compras realizadas <span class="puntos-arrow">→ 1 punto</span>
-                    </div>
-                    <div class="section-divider-label" style="margin-top:18px;">• CLUB PITAYA •</div>
-                    <div class="puntos-centered-row" style="border-bottom:none;">
-                        Por cada <strong>C$250.00</strong> en compras realizadas <span class="puntos-arrow">→ 2 puntos</span>
-                    </div>
-                    <p class="note-footer" style="margin-top:14px;">
-                        *El cálculo de puntos se realizará únicamente sobre compras efectivamente
-                        facturadas durante la vigencia del sorteo.
+                    <p class="note-footer" style="margin-top:4px;">
+                        *Facturas ilegibles, incompletas, alteradas, duplicadas, fuera de fecha<br>
+                        o no registradas vía QR serán automáticamente invalidadas.
                     </p>
                 </div>
+
+                <!-- SEGMENTO 2: Acumulación de puntos -->
+                <div class="tab-segment seg-gray">
+                    <div class="card-title-wrap">
+                        <h3 class="card-title-highlighted card-title-dark">ACUMULACIÓN DE PUNTOS POR MONTO DE COMPRA</h3>
+                    </div>
+                    <div class="puntos-section" style="margin-top:20px;">
+                        <div class="section-divider-label">• CLIENTE REGULAR •</div>
+                        <div class="puntos-centered-row">
+                            Por cada <span class="puntos-amount">C$250.00</span> en compras realizadas <span class="puntos-arrow">→ <span class="puntos-num">1</span> punto</span>
+                        </div>
+                        <div class="section-divider-label" style="margin-top:18px;">• CLUB PITAYA •</div>
+                        <div class="puntos-centered-row" style="border-bottom:none;">
+                            Por cada <span class="puntos-amount">C$250.00</span> en compras realizadas <span class="puntos-arrow">→ <span class="puntos-num">2</span> puntos</span>
+                        </div>
+                        <p class="note-footer" style="margin-top:14px;">
+                            *El cálculo de puntos se realizará únicamente sobre compras efectivamente
+                            facturadas durante la vigencia del sorteo.
+                        </p>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
@@ -193,32 +201,38 @@
     <section id="premios" class="tab-content">
         <div class="content-container">
             <div class="info-card">
-                <div class="card-title-wrap">
-                    <h2 class="card-title-highlighted">PREMIO</h2>
-                </div>
-                <div class="vip-prize-content">
-                    <div class="vip-horizontal">
-                        <img src="img/ticketdoble.png" alt="Ticket Doble VIP" class="vip-ticket-img">
-                        <span class="vip-name">PASE DOBLE VIP</span>
+
+                <!-- SEGMENTO 1: Premio -->
+                <div class="tab-segment seg-white">
+                    <div class="card-title-wrap">
+                        <h2 class="card-title-highlighted">PREMIO</h2>
                     </div>
-                    <p class="vip-note">El premio no es transferible ni canjeable por dinero en efectivo.</p>
+                    <div class="vip-prize-content" style="margin-top:20px;">
+                        <div class="vip-horizontal">
+                            <img src="img/ticketdoble.png" alt="Ticket Doble VIP" class="vip-ticket-img">
+                            <span class="vip-name">PASE DOBLE VIP</span>
+                        </div>
+                        <p class="vip-note">El premio no es transferible ni canjeable por dinero en efectivo.</p>
+                    </div>
                 </div>
 
-                <!-- TÉRMINOS Y CONDICIONES -->
-                <div class="card-title-wrap" style="margin-top:32px;">
-                    <h3 class="card-title-highlighted card-title-dark">TÉRMINOS Y CONDICIONES</h3>
+                <!-- SEGMENTO 2: Términos y Condiciones -->
+                <div class="tab-segment seg-gray">
+                    <div class="card-title-wrap">
+                        <h3 class="card-title-highlighted card-title-dark">TÉRMINOS Y CONDICIONES</h3>
+                    </div>
+                    <ul class="terminos-list" style="margin-top:20px;">
+                        <li>* Participan únicamente personas mayores de <strong>18 años</strong>.</li>
+                        <li>* No podrán participar colaboradores de Batidos Pitaya.</li>
+                        <li>* Para reclamar el premio, el ganador deberá presentar su cédula de identidad vigente.</li>
+                        <li>* Los datos registrados deberán coincidir con los del documento de identidad.</li>
+                        <li>* Las facturas duplicadas, alteradas o fuera de fecha serán invalidadas.</li>
+                        <li>* El ganador será seleccionado mediante sorteo entre las participaciones válidas.</li>
+                        <li>* El premio no es transferible ni canjeable por dinero en efectivo.</li>
+                        <li>* Participar en la promoción implica la aceptación de estos términos y condiciones.</li>
+                        <li>* Solo serán válidas las facturas originales, legibles, completas y registradas durante la vigencia de la promoción.</li>
+                    </ul>
                 </div>
-                <ul class="terminos-list">
-                    <li>* Participan únicamente personas mayores de <strong>18 años</strong>.</li>
-                    <li>* No podrán participar colaboradores de Batidos Pitaya.</li>
-                    <li>* Para reclamar el premio, el ganador deberá presentar su cédula de identidad vigente.</li>
-                    <li>* Los datos registrados deberán coincidir con los del documento de identidad.</li>
-                    <li>* Las facturas duplicadas, alteradas o fuera de fecha serán invalidadas.</li>
-                    <li>* El ganador será seleccionado mediante sorteo entre las participaciones válidas.</li>
-                    <li>* El premio no es transferible ni canjeable por dinero en efectivo.</li>
-                    <li>* Participar en la promoción implica la aceptación de estos términos y condiciones.</li>
-                    <li>* Solo serán válidas las facturas originales, legibles, completas y registradas durante la vigencia de la promoción.</li>
-                </ul>
 
             </div>
         </div>
