@@ -90,41 +90,43 @@
                             </div>
                         </div>
 
-                        <!-- Fila: Código de Participación -->
+                        <!-- Fila: Código de Participación + Puntos (se parte en 2 tras validar) -->
                         <div class="form-row">
                             <label for="codigo_participacion" class="form-row-label">Código de Participación *</label>
-                            <div class="form-row-input">
-                                <input type="text" id="codigo_participacion" name="codigo_participacion"
-                                       placeholder="Se leerá automáticamente de tu ticket"
-                                       readonly required>
+                            <div class="form-row-input codigo-puntos-wrap">
+                                <!-- Input con check SVG dentro -->
+                                <div class="codigo-input-inner">
+                                    <input type="text" id="codigo_participacion" name="codigo_participacion"
+                                           placeholder="Se leerá automáticamente de tu ticket"
+                                           readonly required>
+                                    <span class="codigo-check" id="codigoCheck" style="display:none;" aria-label="Verificado">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                                            <path d="M20 6L9 17l-5-5"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <!-- Puntos acumulados: aparece a la derecha tras validar -->
+                                <div id="puntosContainer" class="puntos-lateral" style="display:none;">
+                                    <span class="puntos-valor" id="puntosValor">0</span>
+                                    <span class="puntos-label-inline">puntos acumulados</span>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Fila: Foto del Ticket + Puntos (en PC en la misma fila tras validar) -->
+                        <!-- Fila: Foto del Ticket -->
                         <div class="form-row form-row-foto">
                             <label class="form-row-label">Foto del Ticket *</label>
-                            <div class="form-row-input foto-input-area">
-                                <!-- Botón cámara / retomar foto -->
-                                <div class="foto-camara-wrap">
-                                    <button type="button" class="camera-btn-icon" id="cameraOpenBtn" onclick="openCamera()">
-                                        <span class="cam-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
-                                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                                                <circle cx="12" cy="13" r="4"/>
-                                                <circle cx="12" cy="13" r="1.5" fill="currentColor" stroke="none"/>
-                                            </svg>
-                                        </span>
-                                        <span class="cam-text" id="camBtnText">Tomar foto del ticket</span>
-                                    </button>
-                                    <!-- Check de verificado (visible tras validar) -->
-                                    <span class="foto-verified-check" id="fotoVerifiedCheck" style="display:none;">✅</span>
-                                </div>
-                                <!-- Puntos acumulados (en PC al lado, en móvil debajo) -->
-                                <div id="puntosContainer" class="puntos-inline" style="display:none;">
-                                    <span class="puntos-valor" id="puntosValor">0</span>
-                                    <span class="puntos-label-inline">punto(s) acumulado(s)</span>
-                                    <span class="puntos-tipo" id="puntosTipo" style="display:none;"></span>
-                                </div>
+                            <div class="form-row-input">
+                                <button type="button" class="camera-btn-icon" id="cameraOpenBtn" onclick="openCamera()">
+                                    <span class="cam-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                            <circle cx="12" cy="13" r="4"/>
+                                            <circle cx="12" cy="13" r="1.5" fill="currentColor" stroke="none"/>
+                                        </svg>
+                                    </span>
+                                    <span class="cam-text" id="camBtnText">Tomar foto del ticket</span>
+                                </button>
                             </div>
                         </div>
 
@@ -475,16 +477,17 @@
     }
 
     async function processTicketImage(blob) {
-        // Mostrar estado de verificando en el botón mismo
+        // SVG spinner inline mientras verifica
+        const spinnerSVG = `<svg class="cam-spinner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" stroke-opacity="1"/></svg>`;
         const camText = document.getElementById('camBtnText');
         const camIcon = document.querySelector('#cameraOpenBtn .cam-icon');
+        if (camIcon) camIcon.innerHTML = spinnerSVG;
         camText.textContent = 'Verificando...';
-        if (camIcon) camIcon.textContent = '⏳';
 
         document.getElementById('submitBtn').disabled = true;
         document.getElementById('codigo_participacion').value = '';
         document.getElementById('puntosContainer').style.display = 'none';
-        document.getElementById('fotoVerifiedCheck').style.display = 'none';
+        document.getElementById('codigoCheck').style.display = 'none';
         document.getElementById('h_validado_imagen').value = '0';
 
         const fd = new FormData();
@@ -492,19 +495,18 @@
         const tokenEl = document.getElementById('h_token_sesion');
         if (tokenEl && tokenEl.value) fd.append('token_sesion', tokenEl.value);
 
+        // SVG cámara para restaurar
+        const camSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/><circle cx="12" cy="13" r="1.5" fill="currentColor" stroke="none"/></svg>`;
+
         try {
             const resp = await fetch('detect_invoice.php', { method: 'POST', body: fd });
             const data = await resp.json();
 
             if (data.success) {
-                // Llenar código (no editable)
                 document.getElementById('codigo_participacion').value = data.codigo_participacion;
 
-                // Llenar puntos en la fila de foto
+                // Puntos en lateral (junto al input de código)
                 document.getElementById('puntosValor').textContent = data.puntos_sorteo;
-                const tipoEl = document.getElementById('puntosTipo');
-                tipoEl.textContent = data.es_club ? 'Club Pitaya' : 'Cliente Regular';
-                tipoEl.style.display = 'inline-block';
                 document.getElementById('puntosContainer').style.display = 'flex';
 
                 // Campos ocultos
@@ -516,21 +518,21 @@
                 document.getElementById('h_puntos_sorteo').value      = data.puntos_sorteo;
                 document.getElementById('h_validado_imagen').value    = '1';
 
-                // Cambiar botón a "Retomar foto" + mostrar check verde
-                if (camIcon) camIcon.textContent = '📷';
-                camText.textContent = 'Retomar foto';
-                document.getElementById('fotoVerifiedCheck').style.display = 'inline';
+                // Check SVG dentro del input de código
+                document.getElementById('codigoCheck').style.display = 'flex';
 
+                // Restaurar botón → "Retomar foto"
+                if (camIcon) camIcon.innerHTML = camSVG;
+                camText.textContent = 'Retomar foto';
                 document.getElementById('submitBtn').disabled = false;
             } else {
-                // Error: resetear botón
-                if (camIcon) camIcon.textContent = '📷';
+                if (camIcon) camIcon.innerHTML = camSVG;
                 camText.textContent = 'Tomar foto del ticket';
                 showMsg('⚠️ ' + (data.mensaje || 'No se pudo verificar el ticket. Reintente la foto.'), '#e6a817');
                 document.getElementById('submitBtn').disabled = true;
             }
         } catch(e) {
-            if (camIcon) camIcon.textContent = '📷';
+            if (camIcon) camIcon.innerHTML = camSVG;
             camText.textContent = 'Tomar foto del ticket';
             showMsg('⚠️ Error al verificar el ticket. Reintente la foto.', '#e6a817');
             document.getElementById('submitBtn').disabled = true;
@@ -585,9 +587,10 @@
                 // Resetear UI de foto
                 const camIcon = document.querySelector('#cameraOpenBtn .cam-icon');
                 const camText = document.getElementById('camBtnText');
-                if (camIcon) camIcon.textContent = '📷';
+                const camSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/><circle cx="12" cy="13" r="1.5" fill="currentColor" stroke="none"/></svg>`;
+                if (camIcon) camIcon.innerHTML = camSVG;
                 if (camText) camText.textContent = 'Tomar foto del ticket';
-                document.getElementById('fotoVerifiedCheck').style.display = 'none';
+                document.getElementById('codigoCheck').style.display = 'none';
                 document.getElementById('puntosContainer').style.display = 'none';
                 showMsg('', '');
             } else if (data.limit_reached) {
