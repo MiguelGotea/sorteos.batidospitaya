@@ -1,4 +1,4 @@
-﻿# Auto-navegar a la raíz (GPS Interno)
+# Auto-navegar a la raíz (GPS Interno)
 Set-Location $PSScriptRoot
 Set-Location ..
 
