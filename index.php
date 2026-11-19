@@ -456,6 +456,9 @@
 
         const fd = new FormData();
         fd.append('ticket_image', blob, 'ticket.jpg');
+        // Enviar el token de sesión para que el servidor valide antes de procesar
+        const tokenEl = document.getElementById('h_token_sesion');
+        if (tokenEl && tokenEl.value) fd.append('token_sesion', tokenEl.value);
 
         try {
             const resp = await fetch('detect_invoice.php', { method: 'POST', body: fd });
@@ -543,6 +546,17 @@
                 document.getElementById('ticketValidationStatus').style.display = 'none';
                 document.getElementById('puntosContainer').style.display = 'none';
                 showMsg('', '');
+            } else if (data.limit_reached) {
+                // Fix C: límite de 20 tickets por dispositivo alcanzado
+                document.getElementById('registrationForm').style.display = 'none';
+                const el = document.getElementById('qrRequiredMessage');
+                el.innerHTML = `
+                    <div class="lock-icon" style="font-size:2.2rem">🎟️</div>
+                    <h2>Límite de participaciones alcanzado</h2>
+                    <p>Has registrado el máximo de <strong>20 tickets</strong> permitidos por participante en este sorteo.</p>
+                    <p>¡Mucha suerte en el sorteo del Concierto Martin Garrix! 🎶</p>
+                `;
+                el.style.display = 'block';
             } else {
                 showMsg('Error: ' + (data.message || 'Intenta nuevamente.'), 'red');
                 document.getElementById('submitBtn').disabled = false;

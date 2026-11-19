@@ -122,6 +122,15 @@ $apiResult = curl_exec($ch);
 $httpCode  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
+// HTTP 429 = límite de tickets por participante alcanzado
+if ($httpCode === 429) {
+    $apiData = json_decode($apiResult, true);
+    $response['limit_reached'] = true;
+    $response['message']       = $apiData['error'] ?? 'Has alcanzado el límite de participaciones.';
+    echo json_encode($response);
+    exit;
+}
+
 if ($httpCode !== 200 || !$apiResult) {
     $response['message'] = 'Error al guardar el registro. Intenta nuevamente.';
     echo json_encode($response);

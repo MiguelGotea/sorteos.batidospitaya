@@ -5,6 +5,9 @@
  * Relay seguro: recibe la imagen del cliente y la reenvía
  * a api.batidospitaya.com/api/sorteos/procesar_ticket.php
  *
+ * FIX A: requiere token_sesion válido antes de gastar créditos de procesamiento
+ * FIX B: valida tamaño máximo de imagen (8 MB)
+ *
  * El token de procesamiento de imágenes NUNCA toca este servidor
  * ni el navegador del cliente. Solo se usa el token de sorteos
  * para autenticar la llamada servidor-a-servidor.
@@ -30,6 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_FILES['ticket_image'])) {
     exit;
 }
 
+// ─── FIX A: Verificar que haya una sesión válida antes de procesar ────────────
+// Sin esto, cualquiera podría enviar imágenes y consumir créditos de IA
+$tokenSesion = trim($_POST['token_sesion'] ?? '');
+if (empty($tokenSesion)) {
+    $response['mensaje'] = 'Sesión no válida. Escanea el QR nuevamente.';
+    echo json_encode($response);
+    exit;
+}
+
 $image = $_FILES['ticket_image'];
 if ($image['error'] !== UPLOAD_ERR_OK) {
     $response['mensaje'] = 'Error al recibir la imagen.';
@@ -37,8 +49,16 @@ if ($image['error'] !== UPLOAD_ERR_OK) {
     exit;
 }
 
-// ─── Reenviar la imagen al endpoint seguro de la API ─────────────────────────
-// El API key de procesamiento SOLO existe en api.batidospitaya.com
+// ─── FIX B: Validar tamaño (máx 8 MB) ────────────────────────────────────────
+$MAX_BYTES = 8 * 1024 * 1024; // 8 MB
+if ($image['size'] > $MAX_BYTES) {
+    $response['mensaje'] = 'La imagen es demasiado grande. Máximo permitido: 8 MB.';
+    echo json_encode($response);
+    exit;
+}
+
+// ─── Reenviar imagen + token_sesion al endpoint seguro de la API ──────────────
+// La API verifica la sesión en DB y NO procesa si ya está usada/expirada
 $apiEndpoint = API_SORTEOS_BASE . '/procesar_ticket.php';
 
 $curlFile = new CURLFile(
@@ -51,10 +71,12 @@ $ch = curl_init($apiEndpoint);
 curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST           => true,
-    CURLOPT_POSTFIELDS     => ['ticket_image' => $curlFile],
+    CURLOPT_POSTFIELDS     => [
+        'ticket_image' => $curlFile,
+        'token_sesion' => $tokenSesion,  // FIX A: la API lo valida en DB
+    ],
     CURLOPT_HTTPHEADER     => [
         'X-Sorteos-Token: ' . API_SORTEOS_TOKEN,
-        // Sin Content-Type: lo pone curl automáticamente para multipart
     ],
     CURLOPT_TIMEOUT        => 25,
 ]);
@@ -80,3 +102,4 @@ if (!$apiResponse) {
 
 // Propagar respuesta de la API al cliente (sin exponer nada interno)
 echo json_encode($apiResponse);
+
