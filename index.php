@@ -47,8 +47,6 @@
                 <!-- Formulario (oculto hasta QR válido) -->
                 <form id="registrationForm" enctype="multipart/form-data" style="display:none;">
 
-                    <h3 class="form-dark-title">📋 Registro de Participación</h3>
-
                     <!-- Filas del formulario en formato tabla -->
                     <div class="form-rows">
 
