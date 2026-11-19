@@ -60,6 +60,14 @@ if (empty($codigoParticipacion)) {
     exit;
 }
 
+// ia_sucursal_nombre es OBLIGATORIO: si la extracción falló el sistema no puede
+// verificar duplicados correctamente. Pedir reintentar la foto.
+if (empty(trim($iaSucursalNombre ?? ''))) {
+    $response['message'] = 'No se pudo identificar la sucursal del ticket. Por favor reintente la fotografía.';
+    echo json_encode($response);
+    exit;
+}
+
 if (!empty($correo) && !preg_match('/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/', $correo)) {
     $response['message'] = 'El correo electrónico no es válido.';
     echo json_encode($response);

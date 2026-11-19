@@ -483,6 +483,11 @@
             showMsg('El código de participación no fue leído. Reintenta la foto del ticket.', 'red');
             return;
         }
+        // ia_sucursal_nombre obligatorio para prevenir duplicados
+        if (!document.getElementById('h_ia_sucursal_nombre').value) {
+            showMsg('No se pudo identificar la sucursal del ticket. Reintenta la foto.', 'red');
+            return;
+        }
 
         document.getElementById('submitBtn').disabled = true;
         showMsg('Enviando registro...', 'var(--primary-teal)');

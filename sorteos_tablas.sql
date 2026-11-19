@@ -70,22 +70,29 @@ CREATE TABLE IF NOT EXISTS `sorteos_registros` (
 
     `fecha_registro`        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    -- ── Restricción de duplicados: mismo código + misma sucursal + mismo sorteo ──
-    -- Las sucursales tienen correlativos propios (pueden repetirse entre sucursales)
-    -- pero NO dentro de la misma sucursal para el mismo sorteo
-    UNIQUE KEY `uk_codigo_sucursal_sorteo` (`codigo_participacion`, `sucursal_id`, `nombre_sorteo`),
+    -- ── Restricción de duplicados: mismo código + misma sucursal (nombre del ticket) + mismo sorteo
+    -- sucursal_id viene del GPS (donde estaba el cliente al escanear)
+    -- ia_sucursal_nombre viene del texto del ticket (obligatorio para validar)
+    -- La restricción usa el NOMBRE de la sucursal del ticket porque los correlativos
+    -- se repiten entre tiendas distintas pero NO dentro de la misma tienda
+    UNIQUE KEY `uk_codigo_suc_nombre_sorteo` (`codigo_participacion`, `ia_sucursal_nombre`(50), `nombre_sorteo`),
 
     INDEX `idx_token_sesion`        (`token_sesion`),
     INDEX `idx_codigo_participacion`(`codigo_participacion`),
     INDEX `idx_nombre_sorteo`       (`nombre_sorteo`),
     INDEX `idx_validado_sistema`    (`validado_sistema`),
     INDEX `idx_fecha_registro`      (`fecha_registro`),
-    INDEX `idx_sucursal`            (`sucursal_id`)
+    INDEX `idx_sucursal`            (`sucursal_id`),
+    INDEX `idx_ia_sucursal`         (`ia_sucursal_nombre`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================================================
 -- Si la tabla YA existe y necesitas agregar la restricción:
 -- ALTER TABLE `sorteos_registros`
---   ADD UNIQUE KEY `uk_codigo_sucursal_sorteo`
---       (`codigo_participacion`, `sucursal_id`, `nombre_sorteo`);
+--   ADD UNIQUE KEY `uk_codigo_suc_nombre_sorteo`
+--       (`codigo_participacion`, `ia_sucursal_nombre`(50), `nombre_sorteo`);
+--
+-- Si existía la restricción anterior con sucursal_id, eliminarla primero:
+-- ALTER TABLE `sorteos_registros`
+--   DROP INDEX `uk_codigo_sucursal_sorteo`;
 -- =============================================================================
